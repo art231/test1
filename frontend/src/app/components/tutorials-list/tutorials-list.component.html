@@ -1,0 +1,24 @@
+<div class="list row">
+  <div class="col-md-8">
+    <div class="input-group mb-3">
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Имя узла</th>
+        <th scope="col">Дата последней статистики</th>
+        <th scope="col">Версия Client</th>
+        <th scope="col">Тип устройства</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tutorial of tutorials; let i = index">
+        <td>{{ tutorial.title }}</td>
+        <td>{{ tutorial.lastStatistics }}</td>
+        <td>{{ tutorial.versionClient }}</td>
+        <td>{{ tutorial.type }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
