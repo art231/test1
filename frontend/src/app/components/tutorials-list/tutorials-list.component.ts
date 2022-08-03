@@ -8,7 +8,6 @@ import { TutorialService } from 'src/app/services/tutorial.service';
   styleUrls: ['./tutorials-list.component.css']
 })
 export class TutorialsListComponent implements OnInit {
-
   tutorials?: Tutorial[];
   currentTutorial: Tutorial = {};
   currentIndex = -1;
@@ -19,7 +18,10 @@ export class TutorialsListComponent implements OnInit {
   ngOnInit(): void {
     this.retrieveTutorials();
   }
-
+  setActiveTutorial(tutorial: Tutorial, index: number): void {
+    this.currentTutorial = tutorial;
+    this.currentIndex = index;
+  }
   retrieveTutorials(): void {
     this.tutorialService.getAll()
       .subscribe({

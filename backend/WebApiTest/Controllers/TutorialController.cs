@@ -7,9 +7,9 @@ namespace WebApiTest.Controllers
     public class TutorialController : ControllerBase
     {
         private static readonly Tutorial[] statistics = new Tutorial[3] {
-            new Tutorial {Title="a123",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
-            new Tutorial {Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
-            new Tutorial {Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"}};
+            new Tutorial {Id=1, Title="a123",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
+            new Tutorial {Id=2, Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
+            new Tutorial {Id=3, Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"}};
 
         private readonly ILogger<TutorialController> _logger;
 

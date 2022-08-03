@@ -1,0 +1,54 @@
+<div *ngIf="viewMode; else editable">
+  <div *ngIf="currentTutorial.id">
+    <h4>Tutorial</h4>
+    <div>
+      <label><strong>Title:</strong></label> {{ currentTutorial.title }}
+    </div>
+    <a class="badge badge-warning" routerLink="/tutorials/{{ currentTutorial.id }}">
+      Edit
+    </a>
+  </div>
+
+  <div *ngIf="!currentTutorial">
+    <br />
+    <p>Please click on a Tutorial...</p>
+  </div>
+</div>
+
+<ng-template #editable>
+  <div *ngIf="currentTutorial.id" class="edit-form">
+    <h4>Tutorial</h4>
+    <form>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" [(ngModel)]="currentTutorial.title" name="title" />
+      </div>
+      <div class="form-group">
+        <label for="lastStatistics">lastStatistics</label>
+        <input type="text" class="form-control" id="lastStatistics" [(ngModel)]="currentTutorial.lastStatistics"
+          name="lastStatistics" />
+      </div>
+      <div class="form-group">
+        <label for="versionClient">versionClient</label>
+        <input type="text" class="form-control" id="versionClient" [(ngModel)]="currentTutorial.versionClient"
+          name="versionClient" />
+      </div>
+      <div class="form-group">
+        <label for="type">type</label>
+        <input type="text" class="form-control" id="type" [(ngModel)]="currentTutorial.type"
+          name="type" />
+      </div>
+    </form>
+
+
+    <button type="submit" class="badge badge-success mb-2" (click)="updateTutorial()">
+      Update
+    </button>
+    <p>{{ message }}</p>
+  </div>
+
+  <div *ngIf="!currentTutorial.id">
+    <br />
+    <p>Cannot access this Tutorial...</p>
+  </div>
+</ng-template>
