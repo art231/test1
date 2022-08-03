@@ -1,0 +1,76 @@
+2022-08-03 09:37:22.442 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-08-03 09:37:22.462 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/swagger/index.html - -
+2022-08-03 09:37:22.471 +03:00 [INF] Hosting environment: Development
+2022-08-03 09:37:22.472 +03:00 [INF] Content root path: C:\Users\Dzakhov.Artem\source\repos\WebApiTest\WebApiTest\
+2022-08-03 09:37:22.677 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/_framework/aspnetcore-browser-refresh.js - -
+2022-08-03 09:37:22.678 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/_vs/browserLink - -
+2022-08-03 09:37:22.683 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/swagger/index.html - - - 200 - text/html;charset=utf-8 224.0955ms
+2022-08-03 09:37:22.692 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/_framework/aspnetcore-browser-refresh.js - - - 200 11990 application/javascript;+charset=utf-8 10.5298ms
+2022-08-03 09:37:22.710 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/_vs/browserLink - - - 200 - text/javascript;+charset=UTF-8 32.7626ms
+2022-08-03 09:37:22.739 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/swagger/v1/swagger.json - -
+2022-08-03 09:37:22.801 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 61.3917ms
+2022-08-03 09:37:25.708 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/Tutorial - -
+2022-08-03 09:37:25.717 +03:00 [INF] Executing endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:37:25.723 +03:00 [INF] Route matched with {action = "Get", controller = "Tutorial"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[WebApiTest.Tutorial] Get() on controller WebApiTest.Controllers.TutorialController (Tutorial).
+2022-08-03 09:37:25.724 +03:00 [INF] --Log Information--
+2022-08-03 09:37:25.729 +03:00 [INF] Executing ObjectResult, writing value of type 'WebApiTest.Tutorial[]'.
+2022-08-03 09:37:25.738 +03:00 [INF] Executed action WebApiTest.Controllers.TutorialController.Get (Tutorial) in 11.4329ms
+2022-08-03 09:37:25.741 +03:00 [INF] Executed endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:37:25.741 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/Tutorial - - - 200 - application/json;+charset=utf-8 32.9271ms
+2022-08-03 09:41:14.323 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:63060/Tutorial - -
+2022-08-03 09:41:14.329 +03:00 [INF] CORS policy execution successful.
+2022-08-03 09:41:14.330 +03:00 [INF] Executing endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:41:14.330 +03:00 [INF] Route matched with {action = "Get", controller = "Tutorial"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[WebApiTest.Tutorial] Get() on controller WebApiTest.Controllers.TutorialController (Tutorial).
+2022-08-03 09:41:14.330 +03:00 [INF] --Log Information--
+2022-08-03 09:41:14.330 +03:00 [INF] Executing ObjectResult, writing value of type 'WebApiTest.Tutorial[]'.
+2022-08-03 09:41:14.331 +03:00 [INF] Executed action WebApiTest.Controllers.TutorialController.Get (Tutorial) in 1.4762ms
+2022-08-03 09:41:14.331 +03:00 [INF] Executed endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:41:14.332 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:63060/Tutorial - - - 200 - application/json;+charset=utf-8 43.5844ms
+2022-08-03 09:41:21.503 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:63060/Tutorial - -
+2022-08-03 09:41:21.503 +03:00 [INF] CORS policy execution successful.
+2022-08-03 09:41:21.504 +03:00 [INF] Executing endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:41:21.504 +03:00 [INF] Route matched with {action = "Get", controller = "Tutorial"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[WebApiTest.Tutorial] Get() on controller WebApiTest.Controllers.TutorialController (Tutorial).
+2022-08-03 09:41:21.504 +03:00 [INF] --Log Information--
+2022-08-03 09:41:21.504 +03:00 [INF] Executing ObjectResult, writing value of type 'WebApiTest.Tutorial[]'.
+2022-08-03 09:41:21.505 +03:00 [INF] Executed action WebApiTest.Controllers.TutorialController.Get (Tutorial) in 0.8339ms
+2022-08-03 09:41:21.505 +03:00 [INF] Executed endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:41:21.505 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:63060/Tutorial - - - 200 - application/json;+charset=utf-8 2.2433ms
+2022-08-03 09:43:30.284 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-08-03 09:43:30.305 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/swagger/index.html - -
+2022-08-03 09:43:30.315 +03:00 [INF] Hosting environment: Development
+2022-08-03 09:43:30.316 +03:00 [INF] Content root path: C:\git\test1\backend\WebApiTest\
+2022-08-03 09:43:30.595 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/_vs/browserLink - -
+2022-08-03 09:43:30.595 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/_framework/aspnetcore-browser-refresh.js - -
+2022-08-03 09:43:30.595 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/swagger/index.html - - - 200 - text/html;charset=utf-8 293.3083ms
+2022-08-03 09:43:30.604 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/_framework/aspnetcore-browser-refresh.js - - - 200 11986 application/javascript;+charset=utf-8 6.4214ms
+2022-08-03 09:43:30.646 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/_vs/browserLink - - - 200 - text/javascript;+charset=UTF-8 51.5791ms
+2022-08-03 09:43:30.667 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/swagger/v1/swagger.json - -
+2022-08-03 09:43:30.740 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 73.4534ms
+2022-08-03 09:43:34.106 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/Tutorial - -
+2022-08-03 09:43:34.115 +03:00 [INF] Executing endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:43:34.121 +03:00 [INF] Route matched with {action = "Get", controller = "Tutorial"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[WebApiTest.Tutorial] Get() on controller WebApiTest.Controllers.TutorialController (Tutorial).
+2022-08-03 09:43:34.122 +03:00 [INF] --Log Information--
+2022-08-03 09:43:34.126 +03:00 [INF] Executing ObjectResult, writing value of type 'WebApiTest.Tutorial[]'.
+2022-08-03 09:43:34.134 +03:00 [INF] Executed action WebApiTest.Controllers.TutorialController.Get (Tutorial) in 9.8586ms
+2022-08-03 09:43:34.136 +03:00 [INF] Executed endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:43:34.136 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/Tutorial - - - 200 - application/json;+charset=utf-8 30.3080ms
+2022-08-03 09:45:13.925 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-08-03 09:45:13.937 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/swagger/index.html - -
+2022-08-03 09:45:13.951 +03:00 [INF] Hosting environment: Development
+2022-08-03 09:45:13.951 +03:00 [INF] Content root path: C:\git\test1\backend\WebApiTest\
+2022-08-03 09:45:14.144 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/_framework/aspnetcore-browser-refresh.js - -
+2022-08-03 09:45:14.145 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/swagger/index.html - - - 200 - text/html;charset=utf-8 210.5366ms
+2022-08-03 09:45:14.150 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/_vs/browserLink - -
+2022-08-03 09:45:14.153 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/_framework/aspnetcore-browser-refresh.js - - - 200 11986 application/javascript;+charset=utf-8 6.6749ms
+2022-08-03 09:45:14.183 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/_vs/browserLink - - - 200 - text/javascript;+charset=UTF-8 33.0486ms
+2022-08-03 09:45:14.242 +03:00 [INF] Request starting HTTP/2 GET https://localhost:44395/swagger/v1/swagger.json - -
+2022-08-03 09:45:14.301 +03:00 [INF] Request finished HTTP/2 GET https://localhost:44395/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 58.9761ms
+2022-08-03 09:45:20.987 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:63060/Tutorial - -
+2022-08-03 09:45:20.991 +03:00 [INF] CORS policy execution successful.
+2022-08-03 09:45:20.997 +03:00 [INF] Executing endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:45:21.004 +03:00 [INF] Route matched with {action = "Get", controller = "Tutorial"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[WebApiTest.Tutorial] Get() on controller WebApiTest.Controllers.TutorialController (Tutorial).
+2022-08-03 09:45:21.005 +03:00 [INF] --Log Information--
+2022-08-03 09:45:21.009 +03:00 [INF] Executing ObjectResult, writing value of type 'WebApiTest.Tutorial[]'.
+2022-08-03 09:45:21.018 +03:00 [INF] Executed action WebApiTest.Controllers.TutorialController.Get (Tutorial) in 10.4269ms
+2022-08-03 09:45:21.020 +03:00 [INF] Executed endpoint 'WebApiTest.Controllers.TutorialController.Get (Tutorial)'
+2022-08-03 09:45:21.021 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:63060/Tutorial - - - 200 - application/json;+charset=utf-8 33.5906ms
