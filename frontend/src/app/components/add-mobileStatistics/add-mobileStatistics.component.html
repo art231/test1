@@ -1,0 +1,31 @@
+<div>
+  <div class="submit-form">
+    <div *ngIf="!submitted">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" required [(ngModel)]="mobileStatisticsItem.title" name="title" />
+      </div>
+      <div class="form-group">
+        <label for="lastStatistics">LastStatistics</label>
+        <input type="text" class="form-control" id="lastStatistics" required [(ngModel)]="mobileStatisticsItem.lastStatistics"
+          name="lastStatistics" />
+      </div>
+      <div class="form-group">
+        <label for="versionClient">versionClient</label>
+        <input type="text" class="form-control" id="versionClient" required [(ngModel)]="mobileStatisticsItem.versionClient"
+          name="versionClient" />
+      </div>
+      <div class="form-group">
+        <label for="type">type</label>
+        <input class="form-control" id="type" required [(ngModel)]="mobileStatisticsItem.type" name="type" />
+      </div>
+
+      <button (click)="saveMobileStatistics()" class="btn btn-success">Submit</button>
+    </div>
+
+    <div *ngIf="submitted">
+      <h4>MobileStatistics was submitted successfully!</h4>
+      <button class="btn btn-success" (click)="newMobileStatistics()">Add</button>
+    </div>
+  </div>
+</div>

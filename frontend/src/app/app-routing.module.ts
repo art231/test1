@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AddTutorialComponent } from './components/add-tutorial/add-tutorial.component';
-import { TutorialUpdateComponent } from './components/tutorial-update/tutorial-update.component';
-import { TutorialsListComponent } from './components/tutorials-list/tutorials-list.component';
+import { AddMobileStatisticsComponent } from './components/add-mobileStatistics/add-mobileStatistics.component';
+import { MobileStatisticsUpdateComponent } from './components/mobileStatistics-update/mobileStatistics-update.component';
+import { MobileStatisticsListComponent } from './components/mobileStatistics-list/mobileStatistics-list.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'tutorials', pathMatch: 'full' },
-  { path: 'add', component: AddTutorialComponent },
-  { path: 'tutorials/:id', component: TutorialUpdateComponent },
-  { path: 'tutorials', component: TutorialsListComponent },
+  { path: '', redirectTo: 'mobileStatistics', pathMatch: 'full' },
+  { path: 'add', component: AddMobileStatisticsComponent },
+  { path: 'mobileStatistics/:id', component: MobileStatisticsUpdateComponent },
+  { path: 'mobileStatistics', component: MobileStatisticsListComponent },
 ];
 
 @NgModule({

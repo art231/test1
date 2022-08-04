@@ -1,0 +1,54 @@
+<div *ngIf="viewMode; else editable">
+  <div *ngIf="currentMobileStatistics.id">
+    <h4>MobileStatistics</h4>
+    <div>
+      <label><strong>Title:</strong></label> {{ currentMobileStatistics.title }}
+    </div>
+    <a class="badge badge-warning" routerLink="/mobileStatistics/{{ currentMobileStatistics.id }}">
+      Edit
+    </a>
+  </div>
+
+  <div *ngIf="!currentMobileStatistics">
+    <br />
+    <p>Please click on a Mobile Statistics...</p>
+  </div>
+</div>
+
+<ng-template #editable>
+  <div *ngIf="currentMobileStatistics.id" class="edit-form">
+    <h4>MobileStatistics</h4>
+    <form>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" [(ngModel)]="currentMobileStatistics.title" name="title" />
+      </div>
+      <div class="form-group">
+        <label for="lastStatistics">lastStatistics</label>
+        <input type="text" class="form-control" id="lastStatistics" [(ngModel)]="currentMobileStatistics.lastStatistics"
+          name="lastStatistics" />
+      </div>
+      <div class="form-group">
+        <label for="versionClient">versionClient</label>
+        <input type="text" class="form-control" id="versionClient" [(ngModel)]="currentMobileStatistics.versionClient"
+          name="versionClient" />
+      </div>
+      <div class="form-group">
+        <label for="type">type</label>
+        <input type="text" class="form-control" id="type" [(ngModel)]="currentMobileStatistics.type"
+          name="type" />
+      </div>
+    </form>
+
+
+    <button type="submit" class="badge badge-success mb-2" (click)="updateMobileStatistics()">
+      Update
+    </button>
+    <p>{{ message }}</p>
+  </div>
+
+  <div *ngIf="!currentMobileStatistics.id">
+    <br />
+    <p>Cannot access this Mobile Statistics...</p>
+  </div>
+</ng-template>

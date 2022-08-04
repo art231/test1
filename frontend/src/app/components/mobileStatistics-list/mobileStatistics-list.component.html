@@ -15,11 +15,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let tutorial of tutorials; let i = index"  [routerLink]="[tutorial.id]">
-            <td>{{ tutorial.title }}</td>
-            <td>{{ tutorial.lastStatistics }}</td>
-            <td>{{ tutorial.versionClient }}</td>
-            <td>{{ tutorial.type }}</td>
+        <tr *ngFor="let mobileStatisticsItem of mobileStatistics; let i = index"  [routerLink]="[mobileStatisticsItem.id]">
+            <td>{{ mobileStatisticsItem.title }}</td>
+            <td>{{ mobileStatisticsItem.lastStatistics }}</td>
+            <td>{{ mobileStatisticsItem.versionClient }}</td>
+            <td>{{ mobileStatisticsItem.type }}</td>
         </tr>
       </tbody>
     </table>

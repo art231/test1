@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Tutorial } from '../models/tutorial.model';
+import { MobileStatistics } from '../models/mobileStatistics.model';
 
-const baseUrl = 'http://localhost:63060/Tutorial';
+const baseUrl = 'http://localhost:63060/mobileStatistics';
 
 @Injectable({
   providedIn: 'root'
@@ -11,16 +11,16 @@ const baseUrl = 'http://localhost:63060/Tutorial';
 
 
 
-export class TutorialService {
+export class MobileStatisticsService {
 
   constructor(private http: HttpClient) { }
   
 
-  getAll(): Observable<Tutorial[]> {
-    return this.http.get<Tutorial[]>(baseUrl);
+  getAll(): Observable<MobileStatistics[]> {
+    return this.http.get<MobileStatistics[]>(baseUrl);
   }
-  get(id: any): Observable<Tutorial> {
-    return this.http.get<Tutorial>(`${baseUrl}/${id}`);
+  get(id: any): Observable<MobileStatistics> {
+    return this.http.get<MobileStatistics>(`${baseUrl}/${id}`);
   }
   
   create(data: any): Observable<any> {
