@@ -14,14 +14,11 @@ namespace WebApiTest.Controllers
             new MobileStatistics {Id=Guid.NewGuid(), Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
             new MobileStatistics {Id=Guid.NewGuid(), Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"}};
 
-        private readonly ILogger<MobileStatisticsController> logger;
         /// <summary>
         /// Конструктор для логгирования.
         /// </summary>
-        /// <param name="logger">Сохраняет значение логов.</param>
-        public MobileStatisticsController(ILogger<MobileStatisticsController> logger)
+        public MobileStatisticsController()
         {
-            this.logger = logger;
         }
         /// <summary>
         /// Мобильная статистика.
@@ -30,7 +27,6 @@ namespace WebApiTest.Controllers
         [HttpGet]
         public IEnumerable<MobileStatistics> Get()
         {
-            this.logger.LogInformation("--Log Information--");
             return statistics;
         }
         /// <summary>
