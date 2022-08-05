@@ -12,13 +12,7 @@ export class MobileStatisticsUpdateComponent implements OnInit {
 
   @Input() viewMode = false;
 
-  @Input() currentMobileStatistics: MobileStatistics = {
-    id:'',
-    title: '',
-    lastStatistics: '',
-    versionClient: '',
-    type:''
-  };
+  @Input() currentMobileStatistics: MobileStatistics = { };
   
   message = '';
 

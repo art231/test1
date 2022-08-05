@@ -9,13 +9,7 @@ import { MobileStatisticsService } from 'src/app/services/mobileStatistics.servi
 })
 export class AddMobileStatisticsComponent {
 
-  mobileStatisticsItem: MobileStatistics = {
-    id:'',
-    title: '',
-    lastStatistics: '',
-    versionClient: '',
-    type:''
-  };
+  mobileStatisticsItem: MobileStatistics = { };
   submitted = false;
 
   constructor(private mobileStatisticsService: MobileStatisticsService) { }
@@ -40,12 +34,7 @@ export class AddMobileStatisticsComponent {
 
   newMobileStatistics(): void {
     this.submitted = false;
-    this.mobileStatisticsItem = {
-      title: '',
-      lastStatistics: '',
-      versionClient: '',
-      type:''
-    };
+    this.mobileStatisticsItem = { };
   }
 
 }
