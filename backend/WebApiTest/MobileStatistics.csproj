@@ -21,13 +21,4 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
-
-  <ItemGroup>
-    <EditorConfigFiles Remove=".\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include=".\.editorconfig" />
-  </ItemGroup>
-
 </Project>
