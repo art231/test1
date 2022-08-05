@@ -1,3 +1,4 @@
+using MobileStatisticsApp.WebFramework;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ var logger = new LoggerConfiguration()
     .CreateLogger();
 // Register Serilog
 builder.Logging.AddSerilog(logger);
+builder.Services.AddMapster();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -26,6 +28,11 @@ app.UseCors(x => x
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true) // allow any origin
                 .AllowCredentials());
+app.UseReDoc(c =>
+{
+    c.DocumentTitle = "REDOC API Documentation";
+    c.SpecUrl = "/swagger/v1/swagger.json";
+});
 app.UseAuthorization();
 
 app.MapControllers();
