@@ -8,7 +8,7 @@ namespace WebApiTest
         /// <summary>
         /// Уникальный ключ мобильной статистики.
         /// </summary>
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         /// <summary>
         /// Название мобильной статистики.
         /// </summary>

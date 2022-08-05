@@ -10,9 +10,9 @@ namespace WebApiTest.Controllers
     public class MobileStatisticsController : ControllerBase
     {
         private static readonly List<MobileStatistics> statistics = new List<MobileStatistics> {
-            new MobileStatistics {Id=1, Title="a123",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
-            new MobileStatistics {Id=2, Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
-            new MobileStatistics {Id=3, Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"}};
+            new MobileStatistics {Id=Guid.NewGuid(), Title="a123",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
+            new MobileStatistics {Id=Guid.NewGuid(), Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
+            new MobileStatistics {Id=Guid.NewGuid(), Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"}};
 
         private readonly ILogger<MobileStatisticsController> logger;
         /// <summary>
@@ -34,13 +34,14 @@ namespace WebApiTest.Controllers
             return statistics;
         }
         /// <summary>
-        /// Мобильная статистика.
+        /// возвращает статистику отдельного устройства.
         /// </summary>
-        /// <returns>Список мобильной статистики.</returns>
+        /// <param name="id">Уникальный ключ.</param>
+        /// <returns>Мобильную статистику устройства.</returns>
         [HttpGet("{id}")]
-        public MobileStatistics GetById(int id)
+        public MobileStatistics GetById(Guid id)
         {
-            return statistics.Find(x => x.Id == id)!;
+            return statistics.FirstOrDefault(x => x.Id == id)!;
         }
         /// <summary>
         /// Добавление статистики.
@@ -50,31 +51,26 @@ namespace WebApiTest.Controllers
         [HttpPost]
         public bool Add(MobileStatistics mobileStatistics)
         {
-            var maxId = statistics.MaxBy(x => x.Id);
-            if (maxId == null)
-            {
-                mobileStatistics.Id = 1;
-            }
-            mobileStatistics.Id = maxId!.Id + 1;
+            mobileStatistics.Id = Guid.NewGuid();
             statistics.Add(mobileStatistics);
             return true;
         }
         /// <summary>
-        /// Обновление статистики.
+        /// Обновление мобильной статистики.
         /// </summary>
-        /// <param name="mobileStatistics">параметры для изменения статистики.</param>
+        /// <param name="mobileStatistics">Данные для изменениня.</param>
+        /// <returns>Отображение что данные изменились.</returns>
         [HttpPut]
-        public void UpdateMobileStatistics(MobileStatistics mobileStatistics)
+        public IActionResult UpdateMobileStatistics(MobileStatistics mobileStatistics)
         {
-            var mobileStatisticsUpdate = statistics.Where(p => p.Id == mobileStatistics.Id);
-
-            if (mobileStatisticsUpdate.Count() > 0)
+            var mobileStatisticsToUpdate = statistics.First(p => p.Id == mobileStatistics.Id);
+            if(mobileStatisticsToUpdate!=null)
             {
-                var toUpdate = mobileStatisticsUpdate.First<MobileStatistics>();
-
-                statistics.Remove(toUpdate);
+                statistics.Remove(mobileStatisticsToUpdate);
                 statistics.Add(mobileStatistics);
+                return Ok();
             }
+            return NotFound();
         }
     }
 }
