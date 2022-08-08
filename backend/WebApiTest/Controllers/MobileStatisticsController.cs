@@ -1,4 +1,6 @@
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using MobileStatisticsApp.Dtos;
 
 namespace WebApiTest.Controllers
 {
@@ -37,7 +39,8 @@ namespace WebApiTest.Controllers
                 return NotFound();
             }
             this.logger.LogInformation("Get data.");
-            return Ok(statistics);
+            var result = statistics.Adapt<List<MobileStatisticsDto>>();
+            return Ok(result);
         }
         /// <summary>
         /// возвращает статистику отдельного устройства.
@@ -49,14 +52,15 @@ namespace WebApiTest.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetById(Guid id)
         {
-            var result = statistics.FirstOrDefault(x => x.Id == id);
-            if(result == null)
+            var resultFromRepo = statistics.FirstOrDefault(x => x.Id == id);
+            if(resultFromRepo == null)
             {
-                logger.LogWarning($"No Mobile Statistics exist with Id {id}, returning HTTP 404 - Not Found.");
+                logger.LogWarning("No Mobile Statistics exist with Id {id}, returning HTTP 404 - Not Found.", id);
                 return NotFound();
             }
             this.logger.LogInformation("Get by id Mobile Statistics.");
-            return Ok(result);
+            resultFromRepo.Adapt<MobileStatisticsDto>();
+            return Ok(resultFromRepo);
         }
         /// <summary>
         /// Добавление статистики.
@@ -91,10 +95,11 @@ namespace WebApiTest.Controllers
                 statistics.Add(mobileStatistics);
 
                 this.logger.LogInformation("Update mobile statistics.");
+                mobileStatisticsToUpdate.Adapt<MobileStatisticsDto>();
                 return Ok();
             }
 
-            logger.LogWarning($"No Mobile Statistics exist with Id {mobileStatistics.Id}, returning HTTP 404 - Not Found.");
+            logger.LogWarning("No Mobile Statistics exist with {mobileStatisticsId}, returning HTTP 404 - Not Found.", mobileStatistics.Id);
             return NotFound();
         }
     }
