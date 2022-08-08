@@ -69,7 +69,6 @@ namespace WebApiTest.Controllers
         /// <returns>true если статистика добавилась.</returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Add(MobileStatistics mobileStatistics)
         {
             this.logger.LogInformation("Add new mobile statistics.");
@@ -95,7 +94,6 @@ namespace WebApiTest.Controllers
                 statistics.Add(mobileStatistics);
 
                 this.logger.LogInformation("Update mobile statistics.");
-                mobileStatisticsToUpdate.Adapt<MobileStatisticsDto>();
                 return Ok();
             }
 
