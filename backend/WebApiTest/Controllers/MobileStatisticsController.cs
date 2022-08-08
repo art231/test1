@@ -14,20 +14,30 @@ namespace WebApiTest.Controllers
             new MobileStatistics {Id=Guid.NewGuid(), Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"},
             new MobileStatistics {Id=Guid.NewGuid(), Title="a",LastStatistics=DateTime.Now, VersionClient="1",Type="windows"}};
 
+        private readonly ILogger<MobileStatisticsController> logger;
         /// <summary>
         /// Конструктор для логгирования.
         /// </summary>
-        public MobileStatisticsController()
+        /// <param name="logger">Сохраняет значение логов.</param>
+        public MobileStatisticsController(ILogger<MobileStatisticsController> logger)
         {
+            this.logger = logger;
         }
         /// <summary>
         /// Мобильная статистика.
         /// </summary>
         /// <returns>Список мобильной статистики.</returns>
         [HttpGet]
-        public IEnumerable<MobileStatistics> Get()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get()
         {
-            return statistics;
+            if(statistics==null)
+            {
+                return NotFound();
+            }
+            this.logger.LogInformation("Get data.");
+            return Ok(statistics);
         }
         /// <summary>
         /// возвращает статистику отдельного устройства.
@@ -35,9 +45,18 @@ namespace WebApiTest.Controllers
         /// <param name="id">Уникальный ключ.</param>
         /// <returns>Мобильную статистику устройства.</returns>
         [HttpGet("{id}")]
-        public MobileStatistics GetById(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetById(Guid id)
         {
-            return statistics.FirstOrDefault(x => x.Id == id)!;
+            var result = statistics.FirstOrDefault(x => x.Id == id);
+            if(result == null)
+            {
+                logger.LogWarning($"No Mobile Statistics exist with Id {id}, returning HTTP 404 - Not Found");
+                return NotFound();
+            }
+            this.logger.LogInformation("Get by id Mobile Statistics.");
+            return Ok(result);
         }
         /// <summary>
         /// Добавление статистики.
@@ -45,11 +64,14 @@ namespace WebApiTest.Controllers
         /// <param name="mobileStatistics">новые параметры мобильной статистики.</param>
         /// <returns>true если статистика добавилась.</returns>
         [HttpPost]
-        public bool Add(MobileStatistics mobileStatistics)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Add(MobileStatistics mobileStatistics)
         {
+            this.logger.LogInformation("Add new mobile statistics.");
             mobileStatistics.Id = Guid.NewGuid();
             statistics.Add(mobileStatistics);
-            return true;
+            return Ok();
         }
         /// <summary>
         /// Обновление мобильной статистики.
@@ -57,15 +79,22 @@ namespace WebApiTest.Controllers
         /// <param name="mobileStatistics">Данные для изменениня.</param>
         /// <returns>Отображение что данные изменились.</returns>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateMobileStatistics(MobileStatistics mobileStatistics)
         {
+            
             var mobileStatisticsToUpdate = statistics.First(p => p.Id == mobileStatistics.Id);
             if(mobileStatisticsToUpdate!=null)
             {
                 statistics.Remove(mobileStatisticsToUpdate);
                 statistics.Add(mobileStatistics);
+
+                this.logger.LogInformation("Update mobile statistics.");
                 return Ok();
             }
+
+            logger.LogWarning($"No Mobile Statistics exist with Id {mobileStatistics.Id}, returning HTTP 404 - Not Found");
             return NotFound();
         }
     }
