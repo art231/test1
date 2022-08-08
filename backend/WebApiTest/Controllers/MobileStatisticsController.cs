@@ -52,7 +52,7 @@ namespace WebApiTest.Controllers
             var result = statistics.FirstOrDefault(x => x.Id == id);
             if(result == null)
             {
-                logger.LogWarning($"No Mobile Statistics exist with Id {id}, returning HTTP 404 - Not Found");
+                logger.LogWarning($"No Mobile Statistics exist with Id {id}, returning HTTP 404 - Not Found.");
                 return NotFound();
             }
             this.logger.LogInformation("Get by id Mobile Statistics.");
@@ -94,7 +94,7 @@ namespace WebApiTest.Controllers
                 return Ok();
             }
 
-            logger.LogWarning($"No Mobile Statistics exist with Id {mobileStatistics.Id}, returning HTTP 404 - Not Found");
+            logger.LogWarning($"No Mobile Statistics exist with Id {mobileStatistics.Id}, returning HTTP 404 - Not Found.");
             return NotFound();
         }
     }
