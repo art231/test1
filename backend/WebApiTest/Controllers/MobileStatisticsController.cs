@@ -59,8 +59,8 @@ namespace WebApiTest.Controllers
                 return NotFound();
             }
             this.logger.LogInformation("Get by id Mobile Statistics.");
-            resultFromRepo.Adapt<MobileStatisticsDto>();
-            return Ok(resultFromRepo);
+            var result = resultFromRepo.Adapt<MobileStatisticsDto>();
+            return Ok(result);
         }
         /// <summary>
         /// Добавление статистики.
