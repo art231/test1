@@ -1,5 +1,8 @@
 using Serilog;
+using MobileStatisticsApp.IoC;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddInfrastructure();
 builder.Host.UseSerilog((ctx, lc) => lc
         .ReadFrom.Configuration(ctx.Configuration));
 builder.Services.AddControllers();

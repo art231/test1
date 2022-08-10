@@ -1,9 +1,10 @@
-namespace WebApiTest
+﻿namespace MobileStatisticsApp.Core.Entities
 {
+
     /// <summary>
     /// Модель мобильной статистики.
     /// </summary>
-    public class MobileStatistics
+    public class MobileStatisticsItem
     {
         /// <summary>
         /// Уникальный ключ мобильной статистики.
@@ -26,5 +27,5 @@ namespace WebApiTest
         /// </summary>
         public string? Type { get; set; }
     }
-    
+
 }
