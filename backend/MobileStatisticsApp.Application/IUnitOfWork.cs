@@ -2,7 +2,13 @@
 
 namespace MobileStatistics.Application;
 
+/// <summary>
+///     Доступ к репозитариям.
+/// </summary>
 public interface IUnitOfWork
 {
-    IMobileStatisticsRepository MobileStatistics { get; }
+    /// <summary>
+    ///     Репозитарий мобильной статистики.
+    /// </summary>
+    IMobileStatisticsRepository MobileStatisticsRepository { get; }
 }

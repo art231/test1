@@ -4,102 +4,88 @@ using MobileStatistics.Application;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Dtos;
 
-namespace WebApiTest.Controllers
+namespace MobileStatisticsApp.Api.Controllers;
+
+/// <summary>
+/// Контроллер для мобильной статистики.
+/// </summary>
+[ApiController]
+[Route("[controller]")]
+public class MobileStatisticsController : ControllerBase
 {
+    private readonly ILogger<MobileStatisticsController> logger;
+    private readonly IUnitOfWork unitOfWork;
+
     /// <summary>
-    /// Контроллер для мобильной статистики.
+    /// Конструктор для логгирования.
     /// </summary>
-    [ApiController]
-    [Route("[controller]")]
-    public class MobileStatisticsController : ControllerBase
+    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>.</param>
+    /// <param name="logger">Сохраняет значение логов.</param>
+    public MobileStatisticsController(IUnitOfWork unitOfWork,
+        ILogger<MobileStatisticsController> logger)
     {
-        private readonly IUnitOfWork unitOfWork;
+        this.unitOfWork = unitOfWork;
+        this.logger = logger;
+    }
 
-        private readonly ILogger<MobileStatisticsController> logger;
-        /// <summary>
-        /// Конструктор для логгирования.
-        /// </summary>
-        /// <param name="logger">Сохраняет значение логов.</param>
-        public MobileStatisticsController(IUnitOfWork unitOfWork,
-            ILogger<MobileStatisticsController> logger)
-        {
-            this.unitOfWork = unitOfWork;
-            this.logger = logger;
-        }
-        /// <summary>
-        /// Мобильная статистика.
-        /// </summary>
-        /// <returns>Список мобильной статистики.</returns>
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsDto>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAll()
-        {
-            var statistics = await unitOfWork.MobileStatistics.GetAllAsync();
-            if (statistics == null)
-            {
-                return NotFound();
-            }
-            this.logger.LogInformation("Get data.");
-            var result = statistics.Adapt<List<MobileStatisticsDto>>();
-            return Ok(result);
-        }
-        /// <summary>
-        /// возвращает статистику отдельного устройства.
-        /// </summary>
-        /// <param name="id">Уникальный ключ.</param>
-        /// <returns>Мобильную статистику устройства.</returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MobileStatisticsDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var statisticsItem = await unitOfWork.MobileStatistics.GetByIdAsync(id);
-            if (statisticsItem == null)
-            {
-                logger.LogWarning("No Mobile Statistics exist with Id {id}, returning HTTP 404 - Not Found.", id);
-                return NotFound();
-            }
-            this.logger.LogInformation("Get by id Mobile Statistics.");
-            var result = statisticsItem.Adapt<MobileStatisticsDto>();
-            return Ok(result);
-        }
-        /// <summary>
-        /// Добавление статистики.
-        /// </summary>
-        /// <param name="mobileStatistics">новые параметры мобильной статистики.</param>
-        /// <returns>true если статистика добавилась.</returns>
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
-        public async Task<IActionResult> Add(MobileStatisticsItem mobileStatistics)
-        {
-            this.logger.LogInformation("Add new mobile statistics.");
-            mobileStatistics.Id = Guid.NewGuid();
-            await unitOfWork.MobileStatistics.AddAsync(mobileStatistics);
-            return Ok();
-        }
-        /// <summary>
-        /// Обновление мобильной статистики.
-        /// </summary>
-        /// <param name="mobileStatistics">Данные для изменениня.</param>
-        /// <returns>Отображение что данные изменились.</returns>
-        [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
-        {
+    /// <summary>
+    /// Мобильная статистика.
+    /// </summary>
+    /// <returns>Список мобильной статистики.</returns>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsDto>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAll()
+    {
+        IReadOnlyList<MobileStatisticsItem>? statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
+        logger.LogInformation("Get data.");
+        var result = statistics.Adapt<List<MobileStatisticsDto>>();
+        return Ok(result);
+    }
 
-            var mobileStatisticsToUpdate = await unitOfWork.MobileStatistics.GetByIdAsync(mobileStatistics.Id);
-            if (mobileStatisticsToUpdate != null)
-            {
-                await unitOfWork.MobileStatistics.UpdateAsync(mobileStatistics);
+    /// <summary>
+    /// возвращает статистику отдельного устройства.
+    /// </summary>
+    /// <param name="id">Уникальный ключ.</param>
+    /// <returns>Мобильную статистику устройства.</returns>
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MobileStatisticsDto))]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        MobileStatisticsItem? statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
 
-                this.logger.LogInformation("Update mobile statistics.");
-                return Ok();
-            }
+        logger.LogInformation("Get by id Mobile Statistics.");
+        var result = statisticsItem.Adapt<MobileStatisticsDto>();
+        return Ok(result);
+    }
 
-            logger.LogWarning("No Mobile Statistics exist with {mobileStatisticsId}, returning HTTP 404 - Not Found.", mobileStatistics.Id);
-            return NotFound();
-        }
+    /// <summary>
+    /// Добавление статистики.
+    /// </summary>
+    /// <param name="mobileStatistics">новые параметры мобильной статистики.</param>
+    /// <returns>true если статистика добавилась.</returns>
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Add(MobileStatisticsItem mobileStatistics)
+    {
+        logger.LogInformation("Add new mobile statistics.");
+        mobileStatistics.Id = Guid.NewGuid();
+        await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Обновление мобильной статистики.
+    /// </summary>
+    /// <param name="mobileStatistics">Данные для изменениня.</param>
+    /// <returns>Отображение что данные изменились.</returns>
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
+    {
+        await unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
+
+        logger.LogInformation("Update mobile statistics.");
+        return Ok();
     }
 }
