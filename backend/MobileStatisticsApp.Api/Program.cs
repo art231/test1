@@ -1,10 +1,13 @@
+using System.Data;
 using MobileStatisticsApp.IoC;
+using Npgsql;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddInfrastructure();
-builder.Host.UseSerilog((context, config) => config
-    .ReadFrom.Configuration(context.Configuration));
+builder.Host.UseSerilog((hbc, lc) => lc
+    .ReadFrom.Configuration(hbc.Configuration));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

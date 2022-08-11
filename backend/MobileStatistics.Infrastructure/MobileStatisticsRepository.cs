@@ -1,8 +1,7 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Configuration;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Repositories;
-using Npgsql;
+using System.Data;
 
 namespace MobileStatisticsApp.Infrastructure;
 
@@ -11,31 +10,39 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsRepository : IMobileStatisticsRepository
 {
-    private readonly IConfiguration configuration;
+    /// <summary>
+    /// Подключение базы данных.
+    /// </summary>
+    private readonly IDbConnection dbconnection;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
-    /// <param name="configuration">Конфиг.</param>
-    public MobileStatisticsRepository(IConfiguration configuration)
+    /// <param name="dbconnection">Соединение.</param>
+    public MobileStatisticsRepository(IDbConnection dbconnection)
     {
-        this.configuration = configuration;
+        this.dbconnection = dbconnection;
     }
 
     /// <summary>
     /// Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Новая сущность.</param>
-    /// <returns>Ок если добавилась.</returns>
-    public async Task<bool> AddAsync(MobileStatisticsItem entity)
+    public void AddAsync(MobileStatisticsItem entity)
     {
-        entity.Id = Guid.NewGuid();
-        entity.LastStatistics = DateTime.Now;
-        var sql =
-            "INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)  VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
-        await using var connection = GetConnection();
-        await connection.ExecuteAsync(sql, entity);
-        return true;
+        dbconnection.Open();
+        try
+        {
+            entity.Id = Guid.NewGuid();
+            var sql =
+                @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
+                VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
+            dbconnection.Execute(sql, entity);
+        }
+        finally
+        {
+            dbconnection.Close();
+        }
     }
 
     /// <summary>
@@ -44,11 +51,19 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>Весь список.</returns>
     public async Task<IReadOnlyList<MobileStatisticsItem>> GetAllAsync()
     {
-        var sql =
-            "SELECT * FROM mobile_statistics";
-        await using var connection = GetConnection();
-        var result = await connection.QueryAsync<MobileStatisticsItem>(sql);
-        return result.ToList();
+        
+        dbconnection.Open();
+        try
+        {
+            var sql =
+                @"SELECT * FROM mobile_statistics";
+            var result = await dbconnection.QueryAsync<MobileStatisticsItem>(sql);
+            return result.ToList();
+        }
+        finally
+        {
+            dbconnection.Close();
+        }
     }
 
     /// <summary>
@@ -58,35 +73,37 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>объект.</returns>
     public async Task<MobileStatisticsItem> GetByIdAsync(Guid id)
     {
-        var sql =
-            "SELECT * FROM mobile_statistics where Id=@Id";
-        await using var connection = GetConnection();
-        var result = await connection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id });
-        return result;
+        try
+        {
+            var sql =
+                @"SELECT * FROM mobile_statistics where Id=@Id";
+            return await dbconnection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id });
+        }
+        finally
+        {
+            dbconnection.Close();
+        }
     }
 
     /// <summary>
     /// Обновление объекта.
     /// </summary>
     /// <param name="entity">Объект для изменения.</param>
-    /// <returns>Ок если изменен.</returns>
-    public async Task<bool> UpdateAsync(MobileStatisticsItem entity)
+    public void UpdateAsync(MobileStatisticsItem entity)
     {
-        var sql =
-            "UPDATE mobile_statistics SET title = @Title," +
-            " last_statistics = @LastStatistics, " +
-            "version_client = @VersionClient,"+
-            " type = @Type";
-        await using var connection = GetConnection();
-        await connection.ExecuteAsync(sql, entity);
-        return true;
-    }
-
-    private NpgsqlConnection GetConnection()
-    {
-        DefaultTypeMap.MatchNamesWithUnderscores = true;
-        var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection"));
-        connection.Open();
-        return connection;
+        dbconnection.Open();
+        try
+        {
+            var sql =
+                @"UPDATE mobile_statistics SET title = @Title,
+                last_statistics = @LastStatistics,  
+                version_client = @VersionClient,
+                type = @Type";
+            dbconnection.Execute(sql, entity);
+        }
+        finally
+        {
+            dbconnection.Close();
+        }
     }
 }
