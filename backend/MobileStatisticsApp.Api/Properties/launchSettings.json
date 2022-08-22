@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "WebApiTest": {
+    "MobileStatisticsApp": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -25,6 +25,14 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "MobileStatisticsAppProd": {
+      "commandName": "Project",
+      "applicationUrl": "https://localhost:7152;http://localhost:5105",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     },
     "Docker": {
