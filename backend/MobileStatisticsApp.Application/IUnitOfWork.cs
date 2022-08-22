@@ -1,4 +1,5 @@
-﻿using MobileStatisticsApp.Repositories;
+﻿using MobileStatisticsApp.Application.Repositories;
+using MobileStatisticsApp.Repositories;
 
 namespace MobileStatistics.Application;
 
@@ -11,4 +12,8 @@ public interface IUnitOfWork
     ///     Репозитарий мобильной статистики.
     /// </summary>
     IMobileStatisticsRepository MobileStatisticsRepository { get; }
+    /// <summary>
+    ///     Репозитарий событий мобильной статистики.
+    /// </summary>
+    IMobileStatisticsEventsRepository MobileStatisticsEventsRepository { get; }
 }
