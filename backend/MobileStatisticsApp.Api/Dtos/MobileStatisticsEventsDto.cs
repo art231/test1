@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace MobileStatisticsApp.Api.Dtos;
 /// <summary>
 /// Модель для отображения мобильной статистики.
@@ -8,7 +10,6 @@ public record MobileStatisticsEventsDto
     ///     Уникальный ключ событий.
     /// </summary>
     public Guid Id { get; init; }
-
     /// <summary>
     ///     Дата последней статистики.
     /// </summary>

@@ -11,7 +11,6 @@ builder.Host.UseSerilog((hbc, lc) => lc
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,3 +36,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+/// <summary>
+/// Нужно чтобы видели тесты.
+/// </summary>
+public partial class Program { }

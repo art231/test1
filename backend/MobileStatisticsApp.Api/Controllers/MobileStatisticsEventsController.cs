@@ -17,9 +17,9 @@ public class MobileStatisticsEventsController : ControllerBase
     private readonly IUnitOfWork unitOfWork;
 
     /// <summary>
-    /// Конструктор для логгирования.
+    /// Конструктор для событий.
     /// </summary>
-    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>.</param>
+    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
     public MobileStatisticsEventsController(IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsEventsController> logger)

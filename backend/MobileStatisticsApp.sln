@@ -5,13 +5,15 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.Api", "MobileStatisticsApp.Api\MobileStatisticsApp.Api.csproj", "{0F721B58-4BF8-4EFC-9A34-B2A33CFB03A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileStatisticsApp.Application", "MobileStatisticsApp.Application\MobileStatisticsApp.Application.csproj", "{85B47345-A705-4784-B04C-68461046C183}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.Application", "MobileStatisticsApp.Application\MobileStatisticsApp.Application.csproj", "{85B47345-A705-4784-B04C-68461046C183}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.Infrastructure", "MobileStatistics.Infrastructure\MobileStatisticsApp.Infrastructure.csproj", "{86C7D872-BE4E-4599-909C-C5F73CDEFC28}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.IoC", "MobileStatisticsApp.IoC\MobileStatisticsApp.IoC.csproj", "{643478EA-4BC0-42A6-951B-6DD6181CBFBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileStatisticsApp.Core", "MobileStatisticsApp.Core\MobileStatisticsApp.Core.csproj", "{3DE7C5B8-041E-49ED-BE00-9AFAD37DF2CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.Core", "MobileStatisticsApp.Core\MobileStatisticsApp.Core.csproj", "{3DE7C5B8-041E-49ED-BE00-9AFAD37DF2CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileStatisticsApp.Test", "MobileStatisticsApp.Test\MobileStatisticsApp.Test.csproj", "{04091711-B8AE-4345-AE7E-917DA23B203C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{3DE7C5B8-041E-49ED-BE00-9AFAD37DF2CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DE7C5B8-041E-49ED-BE00-9AFAD37DF2CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DE7C5B8-041E-49ED-BE00-9AFAD37DF2CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04091711-B8AE-4345-AE7E-917DA23B203C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04091711-B8AE-4345-AE7E-917DA23B203C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04091711-B8AE-4345-AE7E-917DA23B203C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04091711-B8AE-4345-AE7E-917DA23B203C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
