@@ -28,7 +28,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Новая сущность.</param>
-    public void AddAsync(MobileStatisticsItem entity)
+    public void Add(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try
@@ -51,13 +51,13 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>Весь список.</returns>
     public async Task<IReadOnlyList<MobileStatisticsItem>> GetAllAsync()
     {
-        
         dbconnection.Open();
         try
         {
             var sql =
                 @"SELECT * FROM mobile_statistics";
             var result = await dbconnection.QueryAsync<MobileStatisticsItem>(sql);
+
             return result.ToList();
         }
         finally
@@ -89,7 +89,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Обновление объекта.
     /// </summary>
     /// <param name="entity">Объект для изменения.</param>
-    public void UpdateAsync(MobileStatisticsItem entity)
+    public void Update(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try
@@ -98,7 +98,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
                 @"UPDATE mobile_statistics SET title = @Title,
                 last_statistics = @LastStatistics,  
                 version_client = @VersionClient,
-                type = @Type";
+                type = @Type where id=@Id";
             dbconnection.Execute(sql, entity);
         }
         finally

@@ -10,17 +10,11 @@ public interface IMobileStatisticsEventsRepository
     /// Создание события.
     /// </summary>
     /// <param name="entity">Сущность события мобильной статистики.</param>
-    void CreateEvent(MobileStatisticsEvents entity);
+    void CreateEvent(IEnumerable<MobileStatisticsEvent> entity);
     /// <summary>
     /// Получение события мобильной статистики.
     /// </summary>
-    /// <param name="id">Сущность события мобильной статистики.</param>
+    /// <param name="eventId">Сущность события мобильной статистики.</param>
     /// <returns>Событие мобильной статистики.</returns>
-    Task<IEnumerable<MobileStatisticsEvents>> GetByIdAsync(Guid id);
-    /// <summary>
-    /// Обновление события мобильной статистики.
-    /// </summary>
-    /// <param name="entity">Сущность события мобильной статистики.</param>
-
-    void Update(MobileStatisticsEvents entity);
+    Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid eventId);
 }
