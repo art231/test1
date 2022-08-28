@@ -23,11 +23,11 @@ public interface IGenericRepository<T> where T : class
     ///     Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Сущность.</param>
-    void Add(T entity);
+    Task Add(T entity);
 
     /// <summary>
     ///     Обновление сущности.
     /// </summary>
     /// <param name="entity">Сущность для изменения.</param>
-    void Update(T entity);
+    Task Update(T entity);
 }

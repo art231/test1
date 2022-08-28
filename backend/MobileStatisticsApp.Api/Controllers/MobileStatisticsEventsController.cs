@@ -34,10 +34,10 @@ public class MobileStatisticsEventsController : ControllerBase
     /// <returns>Список событий мобильной статистики.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsEventsDto>))]
-    public async Task<IActionResult> GetEventById(Guid eventId)
+    public async Task<IActionResult> GetEventsById(Guid mobileStatisticsId)
     {
-        IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(eventId);
-        MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(eventId);
+        IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
+        MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
         logger.LogInformation("Get events.");
         var result = new MobileStatisticsWithEventsDto
         {
@@ -54,9 +54,9 @@ public class MobileStatisticsEventsController : ControllerBase
     /// <returns>Ок - если создалось.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
+    public async Task<IActionResult> CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
     {
-        unitOfWork.MobileStatisticsEventsRepository.CreateEvent(mobileStatisticsEvents);
+        await unitOfWork.MobileStatisticsEventsRepository.CreateEvent(mobileStatisticsEvents);
         logger.LogInformation("Create event.");
         return Ok();
     }

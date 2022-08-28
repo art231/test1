@@ -28,7 +28,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// Добавление нового события.
     /// </summary>
     /// <param name="entities">Новая сущность.</param>
-    public void CreateEvent(IEnumerable<MobileStatisticsEvent> entities)
+    public async Task CreateEvent(IEnumerable<MobileStatisticsEvent> entities)
     {
         dbconnection.Open();
         try
@@ -40,7 +40,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
             var sql =
                 @"INSERT INTO mobile_statistics_events (mobile_statistics_id, id, Name, Date, description)
                 VALUES(@MobileStatisticsId, @Id, @Name, @Date, @Description);";
-            dbconnection.Execute(sql, entities);
+            await dbconnection.ExecuteAsync(sql, entities);
         }
         finally
         {
@@ -53,14 +53,14 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// </summary>
     /// <param name="eventId">Уникальный идентификатор.</param>
     /// <returns>Объект событий.</returns>
-    public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid eventId)
+    public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid mobileStatisticsId)
     {
         dbconnection.Open();
         try
         {
             var sql =
-                @"SELECT * FROM mobile_statistics_events where mobile_statistics_id=@Id";
-            return await dbconnection.QueryAsync<MobileStatisticsEvent>(sql, new { Id = eventId });
+                @"SELECT * FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
+            return await dbconnection.QueryAsync<MobileStatisticsEvent>(sql, new { MobileStatisticsId = mobileStatisticsId });
         }
         finally
         {

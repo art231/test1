@@ -13,7 +13,7 @@ public record MobileStatisticsEventsDto
     /// <summary>
     ///     Дата последней статистики.
     /// </summary>
-    public DateTime Date { get; init; }
+    public string? Date { get; init; }
 
     /// <summary>
     ///     Название мобильной статистики.

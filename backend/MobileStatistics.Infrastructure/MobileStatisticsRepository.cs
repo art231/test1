@@ -28,7 +28,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Новая сущность.</param>
-    public void Add(MobileStatisticsItem entity)
+    public async Task Add(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try
@@ -37,7 +37,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
             var sql =
                 @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
                 VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
-            dbconnection.Execute(sql, entity);
+            await dbconnection.ExecuteAsync(sql, entity);
         }
         finally
         {
@@ -73,6 +73,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>объект.</returns>
     public async Task<MobileStatisticsItem> GetByIdAsync(Guid id)
     {
+        dbconnection.Open();
         try
         {
             var sql =
@@ -89,7 +90,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Обновление объекта.
     /// </summary>
     /// <param name="entity">Объект для изменения.</param>
-    public void Update(MobileStatisticsItem entity)
+    public async Task Update(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try
@@ -99,7 +100,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
                 last_statistics = @LastStatistics,  
                 version_client = @VersionClient,
                 type = @Type where id=@Id";
-            dbconnection.Execute(sql, entity);
+            await dbconnection.ExecuteAsync(sql, entity);
         }
         finally
         {

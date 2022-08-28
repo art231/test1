@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.IoC", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.Core", "MobileStatisticsApp.Core\MobileStatisticsApp.Core.csproj", "{3DE7C5B8-041E-49ED-BE00-9AFAD37DF2CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileStatisticsApp.Test", "MobileStatisticsApp.Test\MobileStatisticsApp.Test.csproj", "{04091711-B8AE-4345-AE7E-917DA23B203C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileStatisticsApp.Test", "MobileStatisticsApp.Test\MobileStatisticsApp.Test.csproj", "{04091711-B8AE-4345-AE7E-917DA23B203C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
