@@ -28,7 +28,7 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
     public async Task GetAllMobileStatistics()
     {
         var res = await httpClient.GetAsync("/MobileStatistics");
-        Equals(HttpStatusCode.OK, res.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, res.StatusCode);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
         postRequest.Content = new StringContent(myContent, Encoding.UTF8, "application/json");
 
         var response = await httpClient.SendAsync(postRequest);
-        Equals(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
         var response = controller.GetById(idMobileStatistics);
         var result = response.Result as OkObjectResult;
         var resultToObject = result.Value as MobileStatisticsDto;
-        Equals(Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835"), resultToObject.Id);
+        Assert.Equal(Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835"), resultToObject.Id);
     }
 
     private MobileStatisticsItem fakeMobileStatistics = new()
