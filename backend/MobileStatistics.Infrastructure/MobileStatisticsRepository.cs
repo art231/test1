@@ -28,7 +28,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Новая сущность.</param>
-    public async Task Add(MobileStatisticsItem entity)
+    public async Task AddAsync(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try
@@ -90,7 +90,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Обновление объекта.
     /// </summary>
     /// <param name="entity">Объект для изменения.</param>
-    public async Task Update(MobileStatisticsItem entity)
+    public async Task UpdateAsync(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try

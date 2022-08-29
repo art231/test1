@@ -32,7 +32,10 @@
         </div>
       </div>
       <div class="col-sm">
-        dsadasdsadasdasd
+        <h2>{{currentMobileStatistics.title}}</h2>
+        <p>Id устройства: {{currentMobileStatistics.id}}</p>
+        <p>Версия устройства: {{currentMobileStatistics.versionClient}}</p>
+        <p>Тип Устройства: {{currentMobileStatistics.type}}</p>
         <div class="list row">
           <div class="col-md-8">
             <div class="input-group mb-3">
@@ -41,21 +44,23 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th scope="col">Имя узла</th>
-                <th scope="col">Дата последней статистики</th>
+                <th scope="col">Дата.</th>
+                <th scope="col">Событие.</th>
+                <th scope="col">Описание события.</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let mobileStatisticsEvent of mobileStatisticsEvents; let i = index"
                 (click)="getMobileStatisticsEventsById(mobileStatisticsEvent.id)">
+                <td>{{ mobileStatisticsEvent.date }}</td>
                 <td>{{ mobileStatisticsEvent.name }}</td>
+                <td>{{ mobileStatisticsEvent.description }}</td>
               </tr>
             </tbody>
           </table>
         </div>
         <div class="col-md-6">
         </div>
-        dsadasdsadasdasd
       </div>
     </div>
   </div>

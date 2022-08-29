@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MobileStatistics } from 'src/app/models/mobileStatistics.model';
 import { MobileStatisticsEvents } from 'src/app/models/mobileStatisticsEvents.model';
 import { MobileStatisticsService } from 'src/app/services/mobileStatistics.service';
-import { MobileStatisticsEventsService } from 'src/app/services/mobileStatisticsEvents.service';
+import { MobileStatisticsWithEventsService } from 'src/app/services/mobileStatisticsWithEvents.service';
 
 @Component({
   selector: 'app-mobileStatistics-list',
@@ -17,11 +17,10 @@ export class MobileStatisticsListComponent implements OnInit {
   title = '';
 
   constructor(private mobileStatisticsService: MobileStatisticsService,
-    private mobileStatisticsEventsService: MobileStatisticsEventsService) { }
+    private mobileStatisticsWithEventsService: MobileStatisticsWithEventsService) { }
 
   ngOnInit(): void {
     this.retrieveMobileStatistics();
-    this.getMobileStatisticsEventsById(this.currentMobileStatistics.id);
   }
   setActiveMobileStatistics(mobileStatisticsItem: MobileStatistics, mobileStatisticsEventsItem: MobileStatisticsEvents[], index: number): void {
     this.currentMobileStatistics = mobileStatisticsItem;
@@ -40,11 +39,21 @@ export class MobileStatisticsListComponent implements OnInit {
   }
 
   getMobileStatisticsEventsById(id: string): void {
-    this.mobileStatisticsEventsService.get(id)
+    this.mobileStatisticsService.get(id)
       .subscribe({
         next: (data) => {
-          this.mobileStatisticsEvents = data;
-          this.ngOnInit();
+          this.currentMobileStatistics = data;
+          console.log(this.currentMobileStatistics);
+        },
+        error: (e) => console.error(e)
+      });
+
+
+
+    this.mobileStatisticsWithEventsService.get(id)
+      .subscribe({
+        next: (data) => {
+          this.mobileStatisticsEvents = data.events;
           console.log(this.mobileStatisticsEvents);
         },
         error: (e) => console.error(e)

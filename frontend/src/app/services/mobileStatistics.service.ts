@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MobileStatistics } from '../models/mobileStatistics.model';
+import { environment } from 'src/environments/environment';
 
-const baseUrl = 'http://localhost:63060/mobileStatistics';
+const baseUrl = environment.apiMobileStatisticsUrl;
 
 @Injectable({
   providedIn: 'root'

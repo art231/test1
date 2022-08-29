@@ -69,7 +69,7 @@ public class MobileStatisticsController : ControllerBase
     {
         logger.LogInformation("Add new mobile statistics.");
         mobileStatistics.Id = Guid.NewGuid();
-        await unitOfWork.MobileStatisticsRepository.Add(mobileStatistics);
+        await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
         return Ok();
     }
 
@@ -82,7 +82,7 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
     {
-        await unitOfWork.MobileStatisticsRepository.Update(mobileStatistics);
+        await unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
 
         logger.LogInformation("Update mobile statistics.");
         return Ok();
