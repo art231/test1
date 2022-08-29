@@ -9,9 +9,9 @@ public interface IMobileStatisticsEventsRepository
     /// <summary>
     /// Создание события.
     /// </summary>
-    /// <param name="entity">Сущность события мобильной статистики.</param>
+    /// <param name="entities">Сущность события мобильной статистики.</param>
     /// <returns>Выполнение.</returns>
-    Task CreateEvent(IEnumerable<MobileStatisticsEvent> entity);
+    Task CreateEventAsync(IEnumerable<MobileStatisticsEvent> entities);
     /// <summary>
     /// Получение события мобильной статистики.
     /// </summary>

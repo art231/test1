@@ -56,7 +56,7 @@ public class MobileStatisticsEventsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
     {
-        await unitOfWork.MobileStatisticsEventsRepository.CreateEvent(mobileStatisticsEvents);
+        await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
         logger.LogInformation("Create event.");
         return Ok();
     }

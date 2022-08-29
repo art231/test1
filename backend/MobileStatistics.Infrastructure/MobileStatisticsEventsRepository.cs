@@ -28,7 +28,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// Добавление нового события.
     /// </summary>
     /// <param name="entities">Новая сущность.</param>
-    public async Task CreateEvent(IEnumerable<MobileStatisticsEvent> entities)
+    public async Task CreateEventsAsync(IEnumerable<MobileStatisticsEvent> entities)
     {
         dbconnection.Open();
         try
