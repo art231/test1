@@ -28,6 +28,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// Добавление нового события.
     /// </summary>
     /// <param name="entities">Новая сущность.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task CreateEventsAsync(IEnumerable<MobileStatisticsEvent> entities)
     {
         dbconnection.Open();
@@ -51,7 +52,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// <summary>
     /// Получение по ключу объекта.
     /// </summary>
-    /// <param name="eventId">Уникальный идентификатор.</param>
+    /// <param name="mobileStatisticsId">Уникальный идентификатор.</param>
     /// <returns>Объект событий.</returns>
     public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid mobileStatisticsId)
     {

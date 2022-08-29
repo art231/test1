@@ -51,7 +51,7 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
     }
 
     [Fact]
-    public async Task GetById()
+    public void GetById()
     {
         var uowMock = new Mock<IUnitOfWork>();
         var mock = new Mock<ILogger<MobileStatisticsController>>();
@@ -63,8 +63,8 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
         var controller = new MobileStatisticsController(uowMock.Object, logger);
         var response = controller.GetById(idMobileStatistics);
         var result = response.Result as OkObjectResult;
-        var resultToObject = result.Value as MobileStatisticsDto;
-        Assert.Equal(Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835"), resultToObject.Id);
+        var resultToObject = result!.Value as MobileStatisticsDto;
+        Assert.Equal(Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835"), resultToObject!.Id);
     }
 
     private MobileStatisticsItem fakeMobileStatistics = new()

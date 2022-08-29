@@ -9,14 +9,11 @@ using Npgsql;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddInfrastructure();
 builder.Host.UseSerilog((hbc, lc) => lc
     .ReadFrom.Configuration(hbc.Configuration));
 
-
-builder.Services
-    .Configure<PathToFileSql>(builder.Configuration.GetSection(nameof(PathToFileSql)));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -48,7 +45,10 @@ app.MapControllers();
 TypeAdapterConfig<MobileStatisticsEvent, MobileStatisticsEventsDto>.NewConfig()
     .Map(dest => dest.Date, src => Helper.ConvertToIso(src.Date));
 app.Run();
+
 /// <summary>
 /// Нужно чтобы видели тесты.
 /// </summary>
-public partial class Program { }
+public partial class Program
+{
+}

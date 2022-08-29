@@ -23,11 +23,13 @@ public interface IGenericRepository<T> where T : class
     ///     Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Сущность.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     Task AddAsync(T entity);
 
     /// <summary>
     ///     Обновление сущности.
     /// </summary>
     /// <param name="entity">Сущность для изменения.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     Task UpdateAsync(T entity);
 }

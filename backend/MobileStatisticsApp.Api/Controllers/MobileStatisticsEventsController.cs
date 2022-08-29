@@ -27,10 +27,11 @@ public class MobileStatisticsEventsController : ControllerBase
         this.unitOfWork = unitOfWork;
         this.logger = logger;
     }
+
     /// <summary>
     /// Получить события по мобильной статистики.
     /// </summary>
-    /// <param name="eventId">Идентификатор мобильной статистики.</param>
+    /// <param name="mobileStatisticsId">Идентификатор мобильной статистики.</param>
     /// <returns>Список событий мобильной статистики.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsEventsDto>))]
