@@ -39,6 +39,7 @@ public class MobileStatisticsEventsController : ControllerBase
     {
         IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
         MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
+        unitOfWork.Commit();
         logger.LogInformation("Get events.");
         var result = new MobileStatisticsWithEventsDto
         {
@@ -58,6 +59,7 @@ public class MobileStatisticsEventsController : ControllerBase
     public async Task<IActionResult> CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
     {
         await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
+        unitOfWork.Commit();
         logger.LogInformation("Create event.");
         return Ok();
     }
