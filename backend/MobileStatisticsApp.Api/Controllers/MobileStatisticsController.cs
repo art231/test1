@@ -65,11 +65,11 @@ public class MobileStatisticsController : ControllerBase
     /// <returns>true если статистика добавилась.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult Add(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> Add(MobileStatisticsItem mobileStatistics)
     {
         logger.LogInformation("Add new mobile statistics.");
         mobileStatistics.Id = Guid.NewGuid();
-        unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
+        await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
         return Ok();
     }
 
@@ -80,9 +80,9 @@ public class MobileStatisticsController : ControllerBase
     /// <returns>Отображение что данные изменились.</returns>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
     {
-        unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
+        await unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
 
         logger.LogInformation("Update mobile statistics.");
         return Ok();

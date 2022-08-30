@@ -1,4 +1,5 @@
 namespace MobileStatisticsApp.Api.Dtos;
+
 /// <summary>
 /// Модель для отображения списка мобильной статистики.
 /// </summary>

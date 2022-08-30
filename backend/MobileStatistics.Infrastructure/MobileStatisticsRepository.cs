@@ -28,7 +28,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Новая сущность.</param>
-    public void AddAsync(MobileStatisticsItem entity)
+    public async Task AddAsync(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try
@@ -37,7 +37,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
             var sql =
                 @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
                 VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
-            dbconnection.Execute(sql, entity);
+            await dbconnection.ExecuteAsync(sql, entity);
         }
         finally
         {
@@ -51,13 +51,13 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>Весь список.</returns>
     public async Task<IReadOnlyList<MobileStatisticsItem>> GetAllAsync()
     {
-        
         dbconnection.Open();
         try
         {
             var sql =
                 @"SELECT * FROM mobile_statistics";
             var result = await dbconnection.QueryAsync<MobileStatisticsItem>(sql);
+
             return result.ToList();
         }
         finally
@@ -73,6 +73,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>объект.</returns>
     public async Task<MobileStatisticsItem> GetByIdAsync(Guid id)
     {
+        dbconnection.Open();
         try
         {
             var sql =
@@ -89,7 +90,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Обновление объекта.
     /// </summary>
     /// <param name="entity">Объект для изменения.</param>
-    public void UpdateAsync(MobileStatisticsItem entity)
+    public async Task UpdateAsync(MobileStatisticsItem entity)
     {
         dbconnection.Open();
         try
@@ -98,8 +99,8 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
                 @"UPDATE mobile_statistics SET title = @Title,
                 last_statistics = @LastStatistics,  
                 version_client = @VersionClient,
-                type = @Type";
-            dbconnection.Execute(sql, entity);
+                type = @Type where id=@Id";
+            await dbconnection.ExecuteAsync(sql, entity);
         }
         finally
         {

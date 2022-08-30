@@ -17,9 +17,9 @@ public class MobileStatisticsEventsController : ControllerBase
     private readonly IUnitOfWork unitOfWork;
 
     /// <summary>
-    /// Конструктор для логгирования.
+    /// Конструктор для событий.
     /// </summary>
-    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>.</param>
+    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
     public MobileStatisticsEventsController(IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsEventsController> logger)
@@ -27,17 +27,18 @@ public class MobileStatisticsEventsController : ControllerBase
         this.unitOfWork = unitOfWork;
         this.logger = logger;
     }
+
     /// <summary>
     /// Получить события по мобильной статистики.
     /// </summary>
-    /// <param name="id">Идентификатор мобильной статистики.</param>
+    /// <param name="mobileStatisticsId">Идентификатор мобильной статистики.</param>
     /// <returns>Список событий мобильной статистики.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsEventsDto>))]
-    public async Task<IActionResult> GetEventById(Guid id)
+    public async Task<IActionResult> GetEventsById(Guid mobileStatisticsId)
     {
-        IEnumerable<MobileStatisticsEvents> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(id);
-        MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
+        IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
+        MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
         logger.LogInformation("Get events.");
         var result = new MobileStatisticsWithEventsDto
         {
@@ -50,29 +51,14 @@ public class MobileStatisticsEventsController : ControllerBase
     /// <summary>
     /// Создание нового события.
     /// </summary>
-    /// <param name="mobileStatisticsEvent">Сущность нового события.</param>
+    /// <param name="mobileStatisticsEvents">Сущность нового события.</param>
     /// <returns>Ок - если создалось.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult CreateEventById(MobileStatisticsEvents mobileStatisticsEvent)
+    public async Task<IActionResult> CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
     {
-        unitOfWork.MobileStatisticsEventsRepository.CreateEvent(mobileStatisticsEvent);
+        await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
         logger.LogInformation("Create event.");
-        return Ok();
-    }
-
-    /// <summary>
-    /// Обновление событий мобильной статистики.
-    /// </summary>
-    /// <param name="mobileStatisticsEvents">Сущность события.</param>
-    /// <returns>Ок - если успешно.</returns>
-    [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult UpdateEvents(MobileStatisticsEvents mobileStatisticsEvents)
-    {
-        unitOfWork.MobileStatisticsEventsRepository.Update(mobileStatisticsEvents);
-
-        logger.LogInformation("Update mobile statistics events.");
         return Ok();
     }
 }

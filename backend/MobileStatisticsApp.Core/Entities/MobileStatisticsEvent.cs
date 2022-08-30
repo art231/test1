@@ -2,7 +2,7 @@
 /// <summary>
 /// Событие мобильной статистики.
 /// </summary>
-public class MobileStatisticsEvents
+public class MobileStatisticsEvent
 {
     /// <summary>
     ///     Уникальный ключ событий.

@@ -27,17 +27,21 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// <summary>
     /// Добавление нового события.
     /// </summary>
-    /// <param name="entity">Новая сущность.</param>
-    public void CreateEvent(MobileStatisticsEvents entity)
+    /// <param name="entities">Новая сущность.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
+    public async Task CreateEventsAsync(IEnumerable<MobileStatisticsEvent> entities)
     {
         dbconnection.Open();
         try
         {
-            entity.Id = Guid.NewGuid();
+            foreach (var entity in entities)
+            {
+                entity.Id = Guid.NewGuid();
+            }
             var sql =
                 @"INSERT INTO mobile_statistics_events (mobile_statistics_id, id, Name, Date, description)
                 VALUES(@MobileStatisticsId, @Id, @Name, @Date, @Description);";
-            dbconnection.ExecuteAsync(sql, entity);
+            await dbconnection.ExecuteAsync(sql, entities);
         }
         finally
         {
@@ -48,36 +52,16 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// <summary>
     /// Получение по ключу объекта.
     /// </summary>
-    /// <param name="id">Уникальный идентификатор.</param>
+    /// <param name="mobileStatisticsId">Уникальный идентификатор.</param>
     /// <returns>Объект событий.</returns>
-    public async Task<IEnumerable<MobileStatisticsEvents>> GetByIdAsync(Guid id)
-    {
-        try
-        {
-            var sql =
-                @"SELECT * FROM mobile_statistics_events where mobile_statistics_id=@Id";
-            return await dbconnection.QueryAsync<MobileStatisticsEvents>(sql, new { Id = id });
-        }
-        finally
-        {
-            dbconnection.Close();
-        }
-    }
-
-    /// <summary>
-    /// Обновление объекта.
-    /// </summary>
-    /// <param name="entity">Объект для изменения.</param>
-    public void Update(MobileStatisticsEvents entity)
+    public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid mobileStatisticsId)
     {
         dbconnection.Open();
         try
         {
             var sql =
-                @"UPDATE mobile_statistics_events SET name = @Name,
-                        date = @Date,  
-                        description = @Description";
-            dbconnection.Execute(sql, entity);
+                @"SELECT * FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
+            return await dbconnection.QueryAsync<MobileStatisticsEvent>(sql, new { MobileStatisticsId = mobileStatisticsId });
         }
         finally
         {

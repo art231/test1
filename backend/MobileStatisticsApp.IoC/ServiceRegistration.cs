@@ -10,6 +10,8 @@ public static class ServiceRegistration
 {
     public static void AddInfrastructure(this IServiceCollection services)
     {
+
+        services.AddSingleton<DapperDatabase>();
         services.AddTransient<IMobileStatisticsRepository, MobileStatisticsRepository>();
         services.AddTransient<IMobileStatisticsEventsRepository, MobileStatisticsEventsRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
