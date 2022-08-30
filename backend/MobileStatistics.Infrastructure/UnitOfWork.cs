@@ -15,6 +15,7 @@ public class UnitOfWork : IUnitOfWork
     /// <summary>
     ///     Конструктор объединений.
     /// </summary>
+    /// <param name="dbTransaction">Параметр транзакции.</param>
     /// <param name="mobileStatisticsRepository">Репозиторий мобильной статистики.</param>
     ///<param name="mobileStatisticsEventsRepository">Репозиторий мобильной статистики.</param>
     public UnitOfWork(IDbTransaction dbTransaction, IMobileStatisticsRepository mobileStatisticsRepository,
@@ -35,15 +36,18 @@ public class UnitOfWork : IUnitOfWork
     /// </summary>
     public IMobileStatisticsEventsRepository MobileStatisticsEventsRepository { get; }
 
+    /// <summary>
+    /// Добавление транзакции.
+    /// </summary>
     public void Commit()
     {
         try
         {
             dbTransaction.Commit();
             // Добавив это, мы можем иметь несколько транзакций как часть одного запроса.
-            dbTransaction.Connection.BeginTransaction();
+            dbTransaction.Connection?.BeginTransaction();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             dbTransaction.Rollback();
         }

@@ -21,6 +21,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// Конструктор.
     /// </summary>
     /// <param name="dbconnection">Соединение.</param>
+    /// <param name="dbTransaction"> Параметр транзакции.</param>
     public MobileStatisticsEventsRepository(IDbConnection dbconnection,
         IDbTransaction dbTransaction)
     {

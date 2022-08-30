@@ -21,6 +21,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Конструктор.
     /// </summary>
     /// <param name="dbconnection">Соединение.</param>
+    /// <param name="dbTransaction">Параметр транзакции.</param>
     public MobileStatisticsRepository(
         IDbConnection dbconnection,
         IDbTransaction dbTransaction)
@@ -33,6 +34,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Новая сущность.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task AddAsync(MobileStatisticsItem entity)
     {
         entity.Id = Guid.NewGuid();
@@ -71,6 +73,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// Обновление объекта.
     /// </summary>
     /// <param name="entity">Объект для изменения.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task UpdateAsync(MobileStatisticsItem entity)
     {
         var sql =
