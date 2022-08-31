@@ -27,6 +27,11 @@ public class DapperDatabase
     {
         var query = "SELECT datname FROM pg_database where datname = @dbName";
         var path = Path.Combine(Environment.CurrentDirectory, @"CreateDatabase.sql");
+
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Test")
+        {
+            path = Path.GetFullPath("..\\..\\..\\..\\MobileStatisticsApp.Api\\CreateDatabase.sql");
+        }
         var script = File.ReadAllText(path);
         var parameters = new DynamicParameters();
         parameters.Add("dbName", dbName);

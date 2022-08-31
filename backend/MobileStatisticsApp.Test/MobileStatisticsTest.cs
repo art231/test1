@@ -1,26 +1,32 @@
-using System.Net;
+п»їusing System.Net;
 using System.Text;
-using MobileStatisticsApp.Core.Entities;
-using Newtonsoft.Json;
-using Xunit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MobileStatistics.Application;
 using MobileStatisticsApp.Api.Controllers;
+using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Dtos;
 using Moq;
+using Newtonsoft.Json;
+using Xunit;
 
 namespace MobileStatisticsApp.Test;
+
 /// <summary>
-/// Тесты для мобильной статистики.
+///     РўРµСЃС‚С‹ РґР»СЏ РјРѕР±РёР»СЊРЅРѕР№ СЃС‚Р°С‚РёСЃС‚РёРєРё.
 /// </summary>
 public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
 {
-    private HttpClient httpClient;
-    private Guid idMobileStatistics = Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835");
+    private readonly MobileStatisticsItem fakeMobileStatistics = new()
+    {
+        Id = Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835")
+    };
+
+    private readonly HttpClient httpClient;
+    private readonly Guid idMobileStatistics = Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835");
 
     /// <summary>
-    /// Конструктор для создания подключения к проекту.
+    ///     РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє РїСЂРѕРµРєС‚Сѓ.
     /// </summary>
     /// <param name="factory"></param>
     public MobileStatisticsTest(TestingWebAppFactory<Program> factory)
@@ -29,7 +35,7 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
     }
 
     /// <summary>
-    /// Проверка для всего списка мобильной статистики.
+    ///     РџСЂРѕРІРµСЂРєР° РґР»СЏ РІСЃРµРіРѕ СЃРїРёСЃРєР° РјРѕР±РёР»СЊРЅРѕР№ СЃС‚Р°С‚РёСЃС‚РёРєРё.
     /// </summary>
     /// <returns></returns>
     [Fact]
@@ -38,8 +44,9 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
         var res = await httpClient.GetAsync("/MobileStatistics");
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
     }
+
     /// <summary>
-    /// Проверка для создания нового события для мобильной статистики.
+    ///     РџСЂРѕРІРµСЂРєР° РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ СЃРѕР±С‹С‚РёСЏ РґР»СЏ РјРѕР±РёР»СЊРЅРѕР№ СЃС‚Р°С‚РёСЃС‚РёРєРё.
     /// </summary>
     /// <returns></returns>
     [Fact]
@@ -60,8 +67,9 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
         var response = await httpClient.SendAsync(postRequest);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
     /// <summary>
-    /// Проверка получения событий по идентификатору.
+    ///     РџСЂРѕРІРµСЂРєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃРѕР±С‹С‚РёР№ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ.
     /// </summary>
     [Fact]
     public void GetById()
@@ -79,9 +87,4 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
         var resultToObject = result!.Value as MobileStatisticsDto;
         Assert.Equal(Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835"), resultToObject!.Id);
     }
-
-    private MobileStatisticsItem fakeMobileStatistics = new()
-    {
-        Id = Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835")
-    };
 }
