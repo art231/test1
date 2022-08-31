@@ -10,9 +10,9 @@ using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IDbTransaction>(s =>
+builder.Services.AddScoped(s =>
 {
-    IDbConnection conn = s.GetRequiredService<IDbConnection>();
+    var conn = s.GetRequiredService<IDbConnection>();
     conn.Open();
     return conn.BeginTransaction();
 });

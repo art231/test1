@@ -1,8 +1,5 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -10,17 +7,20 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["WebApiTest/WebApiTest.csproj", "WebApiTest/"]
-RUN nuget.exe restore "WebApiTest/WebApiTest.csproj" -SolutionDirectory ../ -Verbosity normal
-RUN dotnet restore "WebApiTest/WebApiTest.csproj"
+COPY ["MobileStatisticsApp.Api/MobileStatisticsApp.Api.csproj", "MobileStatisticsApp.Api/"]
+COPY ["MobileStatisticsApp.Application/MobileStatisticsApp.Application.csproj", "MobileStatisticsApp.Application/"]
+COPY ["MobileStatisticsApp.Core/MobileStatisticsApp.Core.csproj", "MobileStatisticsApp.Core/"]
+COPY ["MobileStatisticsApp.IoC/MobileStatisticsApp.IoC.csproj", "MobileStatisticsApp.IoC/"]
+COPY ["MobileStatistics.Infrastructure/MobileStatisticsApp.Infrastructure.csproj", "MobileStatistics.Infrastructure/"]
+RUN dotnet restore "MobileStatisticsApp.Api/MobileStatisticsApp.Api.csproj"
 COPY . .
-WORKDIR "/src/WebApiTest"
-RUN dotnet build "WebApiTest.csproj" -c Release -o /app/build
+WORKDIR "/src/MobileStatisticsApp.Api"
+RUN dotnet build "MobileStatisticsApp.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WebApiTest.csproj" -c Release -o /app/publish
+RUN dotnet publish "MobileStatisticsApp.Api.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebApiTest.dll"]
+ENTRYPOINT ["dotnet", "MobileStatisticsApp.Api.dll"]

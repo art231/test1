@@ -11,26 +11,37 @@ using MobileStatisticsApp.Dtos;
 using Moq;
 
 namespace MobileStatisticsApp.Test;
-
+/// <summary>
+/// Тесты для мобильной статистики.
+/// </summary>
 public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
 {
     private HttpClient httpClient;
     private Guid idMobileStatistics = Guid.Parse("cea30e5b-3171-4ead-820a-53a9d958d835");
 
-
+    /// <summary>
+    /// Конструктор для создания подключения к проекту.
+    /// </summary>
+    /// <param name="factory"></param>
     public MobileStatisticsTest(TestingWebAppFactory<Program> factory)
     {
         httpClient = factory.CreateClient();
     }
 
-
+    /// <summary>
+    /// Проверка для всего списка мобильной статистики.
+    /// </summary>
+    /// <returns></returns>
     [Fact]
     public async Task GetAllMobileStatistics()
     {
         var res = await httpClient.GetAsync("/MobileStatistics");
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
     }
-
+    /// <summary>
+    /// Проверка для создания нового события для мобильной статистики.
+    /// </summary>
+    /// <returns></returns>
     [Fact]
     public async Task CreateNewMobileStatistics()
     {
@@ -49,7 +60,9 @@ public class MobileStatisticsTest : IClassFixture<TestingWebAppFactory<Program>>
         var response = await httpClient.SendAsync(postRequest);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
-
+    /// <summary>
+    /// Проверка получения событий по идентификатору.
+    /// </summary>
     [Fact]
     public void GetById()
     {

@@ -8,6 +8,13 @@
     <IsPackable>false</IsPackable>
 	<PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<CodeAnalysisRuleSet>..\MobileStatisticsApp.Api\infotecs.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />

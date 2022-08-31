@@ -25,14 +25,8 @@ public class DapperDatabase
     /// <param name="dbName">Название базы данных.</param>
     public void CreateDatabase(string dbName)
     {
-        var path = String.Empty;
-
         var query = "SELECT datname FROM pg_database where datname = @dbName";
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ||
-            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-            path = Path.Combine(Directory.GetCurrentDirectory(), @"CreateDatabase.sql");
-        else
-            path = Path.GetFullPath("..\\..\\..\\..\\MobileStatisticsApp.Api\\CreateDatabase.sql");
+        var path = Path.Combine(Environment.CurrentDirectory, @"CreateDatabase.sql");
         var script = File.ReadAllText(path);
         var parameters = new DynamicParameters();
         parameters.Add("dbName", dbName);
