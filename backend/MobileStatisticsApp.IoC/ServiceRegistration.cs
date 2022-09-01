@@ -17,7 +17,7 @@ public static class ServiceRegistration
     /// <param name="services">Общая коллекция сервисов программы.</param>
     public static void AddInfrastructure(this IServiceCollection services)
     {
-        services.AddSingleton<DapperDatabase>();
+        services.AddTransient<DapperDatabase>();
         services.AddTransient<IMobileStatisticsRepository, MobileStatisticsRepository>();
         services.AddTransient<IMobileStatisticsEventsRepository, MobileStatisticsEventsRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();

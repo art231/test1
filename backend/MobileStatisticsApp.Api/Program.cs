@@ -9,7 +9,7 @@ using Npgsql;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped(s =>
 {
     var conn = s.GetRequiredService<IDbConnection>();
@@ -25,8 +25,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 WebApplication app = builder.Build();
 
-var createDb = app.Services.GetRequiredService<DapperDatabase>();
-createDb.CreateDatabase("test1");
+var serviceScopeFactory = app.Services.GetService<IServiceScopeFactory>();
+using (var scope = serviceScopeFactory.CreateScope())
+{
+    var createDb = scope.ServiceProvider.GetRequiredService<DapperDatabase>();
+    createDb.CreateDatabase("test1");
+}
 
 if (app.Environment.IsDevelopment())
 {
