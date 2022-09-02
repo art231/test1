@@ -26,6 +26,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
         IDbConnection dbconnection,
         IDbTransaction dbTransaction)
     {
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         this.dbconnection = dbconnection;
         this.dbTransaction = dbTransaction;
     }
