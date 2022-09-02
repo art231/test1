@@ -6,7 +6,9 @@ using MobileStatisticsApp.Repositories;
 using Moq;
 using Xunit;
 namespace MobileStatisticsApp.Test;
-
+/// <summary>
+/// Модульные тесты.
+/// </summary>
 public class MobileStatisticsUnitTests : IClassFixture<TestingWebAppFactory<Program>>
 {
     private readonly MobileStatisticsItem fakeMobileStatistics = new()
