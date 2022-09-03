@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen();
 WebApplication app = builder.Build();
 
 var serviceScopeFactory = app.Services.GetService<IServiceScopeFactory>();
-using (var scope = serviceScopeFactory.CreateScope())
+using (var scope = serviceScopeFactory!.CreateScope())
 {
     var createDb = scope.ServiceProvider.GetRequiredService<DapperDatabase>();
     createDb.CreateDatabase("test1");

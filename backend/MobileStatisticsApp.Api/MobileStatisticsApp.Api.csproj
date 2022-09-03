@@ -14,6 +14,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <PropertyGroup>
+    <OutputDir>.\MSBUILDRELEASE</OutputDir>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="CreateDatabase.sql" />
   </ItemGroup>
