@@ -21,7 +21,9 @@ public class MobileStatisticsIntegrationTests : IClassFixture<TestingWebAppFacto
         VersionClient = "1.2.2",
         Type = "windows"
     };
-
+    /// <summary>
+    /// Модель для тестов.
+    /// </summary>
     public sealed class MobileStatisticsCreateModel
     {
         /// <summary>
@@ -90,9 +92,17 @@ public class MobileStatisticsIntegrationTests : IClassFixture<TestingWebAppFacto
 
         var resultCreate = await httpClient.SendAsync(postRequest);
         resultCreate.EnsureSuccessStatusCode();
-        //Получение мобильной статистики.
+    }
+    /// <summary>
+    /// Проверка по имени и по дате.
+    /// </summary>
+    /// <returns></returns>
+    [Fact]
+    public async Task GetByNameAndDate()
+    {
         var res = await httpClient.GetAsync("/MobileStatistics");
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+
         var content = await res.Content.ReadAsStringAsync();
         var responseData = JsonConvert.DeserializeObject<MobileStatisticsItem[]>(content)!;
         var resultFromDb = responseData.Where(x => x.LastStatistics.Date == fakeModel.LastStatistics.Date
