@@ -91,7 +91,7 @@ public class MobileStatisticsIntegrationTests : IClassFixture<TestingWebAppFacto
         postRequest.Content = new StringContent(myContent, Encoding.UTF8, "application/json");
 
         var resultCreate = await httpClient.SendAsync(postRequest);
-        resultCreate.EnsureSuccessStatusCode();
+        Assert.Equal(HttpStatusCode.OK, resultCreate.StatusCode);
     }
     /// <summary>
     /// Проверка по имени и по дате.
