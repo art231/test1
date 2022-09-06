@@ -37,7 +37,7 @@ public class MobileStatisticsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         IReadOnlyList<MobileStatisticsItem>? statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
-        unitOfWork.Commit();
+        unitOfWork.CommitAndDispose();
         logger.LogInformation("Get data.");
         var result = statistics.Adapt<List<MobileStatisticsDto>>();
         return Ok(result);
@@ -53,7 +53,7 @@ public class MobileStatisticsController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         MobileStatisticsItem? statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
-        unitOfWork.Commit();
+        unitOfWork.CommitAndDispose();
         logger.LogInformation("Get by id Mobile Statistics.");
         var result = statisticsItem.Adapt<MobileStatisticsDto>();
         return Ok(result);
@@ -71,7 +71,7 @@ public class MobileStatisticsController : ControllerBase
         logger.LogInformation("Add new mobile statistics.");
         mobileStatistics.Id = Guid.NewGuid();
         await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
-        unitOfWork.Commit();
+        unitOfWork.CommitAndDispose();
         return Ok();
     }
 
@@ -85,7 +85,7 @@ public class MobileStatisticsController : ControllerBase
     public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
     {
         await unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
-        unitOfWork.Commit();
+        unitOfWork.CommitAndDispose();
         logger.LogInformation("Update mobile statistics.");
         return Ok();
     }

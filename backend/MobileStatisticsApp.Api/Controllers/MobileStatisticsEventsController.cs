@@ -15,13 +15,14 @@ public class MobileStatisticsEventsController : ControllerBase
 {
     private readonly ILogger<MobileStatisticsEventsController> logger;
     private readonly IUnitOfWork unitOfWork;
-
+    
     /// <summary>
     /// Конструктор для событий.
     /// </summary>
     /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
-    public MobileStatisticsEventsController(IUnitOfWork unitOfWork,
+    public MobileStatisticsEventsController(
+        IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsEventsController> logger)
     {
         this.unitOfWork = unitOfWork;
@@ -39,13 +40,14 @@ public class MobileStatisticsEventsController : ControllerBase
     {
         IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
         MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
-        unitOfWork.Commit();
+        unitOfWork.CommitAndDispose();
         logger.LogInformation("Get events.");
         var result = new MobileStatisticsWithEventsDto
         {
             Id = mobileStatistics.Id,
             Events = events.Adapt<IEnumerable<MobileStatisticsEventsDto>>(),
         };
+
         return Ok(result);
     }
 
@@ -59,7 +61,7 @@ public class MobileStatisticsEventsController : ControllerBase
     public async Task<IActionResult> CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
     {
         await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
-        unitOfWork.Commit();
+        unitOfWork.CommitAndDispose();
         logger.LogInformation("Create event.");
         return Ok();
     }

@@ -8,7 +8,7 @@ namespace MobileStatisticsApp.Infrastructure;
 /// <summary>
 ///     Объединения репозитариев.
 /// </summary>
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private IDbTransaction dbTransaction;
 
@@ -18,14 +18,15 @@ public class UnitOfWork : IUnitOfWork
     /// <param name="dbTransaction">Параметр транзакции.</param>
     /// <param name="mobileStatisticsRepository">Репозиторий мобильной статистики.</param>
     ///<param name="mobileStatisticsEventsRepository">Репозиторий мобильной статистики.</param>
-    public UnitOfWork(IDbTransaction dbTransaction, IMobileStatisticsRepository mobileStatisticsRepository,
+    public UnitOfWork(IDbTransaction dbTransaction,
+        IMobileStatisticsRepository mobileStatisticsRepository,
         IMobileStatisticsEventsRepository mobileStatisticsEventsRepository)
     {
         MobileStatisticsRepository = mobileStatisticsRepository;
         MobileStatisticsEventsRepository = mobileStatisticsEventsRepository;
         this.dbTransaction = dbTransaction;
     }
-
+    
     /// <summary>
     ///     Репозиторий мобильной статистики.
     /// </summary>
@@ -35,7 +36,7 @@ public class UnitOfWork : IUnitOfWork
     ///     Репозиторий событий мобильной статистики.
     /// </summary>
     public IMobileStatisticsEventsRepository MobileStatisticsEventsRepository { get; }
-
+    
     /// <summary>
     /// Добавление транзакции.
     /// </summary>
@@ -44,12 +45,25 @@ public class UnitOfWork : IUnitOfWork
         try
         {
             dbTransaction.Commit();
-            // Добавив это, мы можем иметь несколько транзакций как часть одного запроса.
-            dbTransaction.Connection?.BeginTransaction();
         }
         catch (Exception)
         {
             dbTransaction.Rollback();
         }
+    }
+    /// <summary>
+    /// Коммит и очистка памяти.
+    /// </summary>
+    public void CommitAndDispose()
+    {
+        Commit();
+        Dispose();
+    }
+    /// <summary>
+    /// Очистка памяти.
+    /// </summary>
+    public void Dispose()
+    {
+        dbTransaction.Dispose();
     }
 }

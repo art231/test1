@@ -3,7 +3,7 @@ namespace MobileStatisticsApp.Dtos;
 /// <summary>
 /// Внешняя модель данных.
 /// </summary>
-public record MobileStatisticsDto
+public sealed record MobileStatisticsDto
 {
     /// <summary>
     /// Уникальный ключ мобильной статистики.

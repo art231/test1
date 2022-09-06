@@ -3,7 +3,7 @@ namespace MobileStatisticsApp.Api.Dtos;
 /// <summary>
 /// Модель для отображения мобильной статистики.
 /// </summary>
-public record MobileStatisticsEventsDto
+public sealed record MobileStatisticsEventsDto
 {
     /// <summary>
     /// Уникальный ключ событий.

@@ -48,7 +48,6 @@ if (app.Environment.IsDevelopment())
         .SetIsOriginAllowed(origin => true) // allow any origin
         .AllowCredentials());
 }
-
 app.UseAuthorization();
 
 app.MapControllers();
