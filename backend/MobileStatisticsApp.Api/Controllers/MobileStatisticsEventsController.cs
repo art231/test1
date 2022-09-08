@@ -1,6 +1,8 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using MobileStatistics.Application;
+using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
 using MobileStatisticsApp.Core.Entities;
 
@@ -13,18 +15,24 @@ namespace MobileStatisticsApp.Api.Controllers;
 [Route("[controller]")]
 public class MobileStatisticsEventsController : ControllerBase
 {
+    private readonly IHubContext<MobileStatisticsEventsHub> hub;
+    private readonly TimerManager timer;
     private readonly ILogger<MobileStatisticsEventsController> logger;
     private readonly IUnitOfWork unitOfWork;
-    
+
     /// <summary>
     /// Конструктор для событий.
     /// </summary>
     /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
     public MobileStatisticsEventsController(
+        IHubContext<MobileStatisticsEventsHub> hub,
+        TimerManager timer,
         IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsEventsController> logger)
     {
+        this.hub = hub;
+        this.timer = timer;
         this.unitOfWork = unitOfWork;
         this.logger = logger;
     }
@@ -38,6 +46,11 @@ public class MobileStatisticsEventsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsEventsDto>))]
     public async Task<IActionResult> GetEventsById(Guid mobileStatisticsId)
     {
+        if (mobileStatisticsId == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
+
         IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
         MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
         unitOfWork.CommitAndDispose();
@@ -47,7 +60,6 @@ public class MobileStatisticsEventsController : ControllerBase
             Id = mobileStatistics.Id,
             Events = events.Adapt<IEnumerable<MobileStatisticsEventsDto>>(),
         };
-
         return Ok(result);
     }
 
@@ -63,6 +75,14 @@ public class MobileStatisticsEventsController : ControllerBase
         await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
         unitOfWork.CommitAndDispose();
         logger.LogInformation("Create event.");
+        if (!timer.IsTimerStarted)
+        {
+            timer.PrepareTimer(() =>
+                hub.Clients.All.SendAsync(
+                    "TransferData", mobileStatisticsEvents
+                )
+            );
+        }
         return Ok();
     }
 }

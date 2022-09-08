@@ -21,7 +21,8 @@ public class MobileStatisticsController : ControllerBase
     /// </summary>
     /// <param name="unitOfWork"><see cref="IUnitOfWork"/>.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
-    public MobileStatisticsController(IUnitOfWork unitOfWork,
+    public MobileStatisticsController(
+        IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsController> logger)
     {
         this.unitOfWork = unitOfWork;

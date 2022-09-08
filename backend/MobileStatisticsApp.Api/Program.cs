@@ -1,6 +1,7 @@
 using System.Data;
 using Mapster;
 using MobileStatisticsApp.Api;
+using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Infrastructure;
@@ -23,10 +24,24 @@ builder.Host.UseSerilog((hbc, lc) => lc
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR(h =>
+{
+    h.MaximumReceiveMessageSize = 102400000;
+    h.EnableDetailedErrors = true;
+});
+builder.Services.AddSingleton<TimerManager>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder => builder
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
 WebApplication app = builder.Build();
 
 var serviceScopeFactory = app.Services.GetService<IServiceScopeFactory>();
-using (var scope = serviceScopeFactory!.CreateScope())
+using (IServiceScope scope = serviceScopeFactory!.CreateScope())
 {
     var createDb = scope.ServiceProvider.GetRequiredService<DapperDatabase>();
     createDb.CreateDatabase("test1");
@@ -48,6 +63,8 @@ if (app.Environment.IsDevelopment())
         .SetIsOriginAllowed(origin => true) // allow any origin
         .AllowCredentials());
 }
+
+app.MapHub<MobileStatisticsEventsHub>("/mobileStatisticsHub");
 app.UseAuthorization();
 
 app.MapControllers();
