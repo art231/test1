@@ -25,6 +25,8 @@ public class MobileStatisticsEventsController : ControllerBase
     /// </summary>
     /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
+    /// <param name="hub">Подключение слушателя.</param>
+    /// <param name="timer">Таймер.</param>
     public MobileStatisticsEventsController(
         IHubContext<MobileStatisticsEventsHub> hub,
         TimerManager timer,
