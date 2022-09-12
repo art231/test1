@@ -10,24 +10,17 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsRepository : IMobileStatisticsRepository
 {
-    /// <summary>
-    /// Подключение базы данных.
-    /// </summary>
-    private readonly IDbConnection dbconnection;
 
     private readonly IDbTransaction dbTransaction;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
-    /// <param name="dbconnection">Соединение.</param>
     /// <param name="dbTransaction">Параметр транзакции.</param>
     public MobileStatisticsRepository(
-        IDbConnection dbconnection,
         IDbTransaction dbTransaction)
     {
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-        this.dbconnection = dbconnection;
+        RepositoryExtensions.AddUnderScores();
         this.dbTransaction = dbTransaction;
     }
 
@@ -42,7 +35,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
         var sql =
             @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
                 VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
-        await dbconnection.ExecuteAsync(sql, entity, dbTransaction);
+        await dbTransaction.Connection.ExecuteAsync(sql, entity, dbTransaction);
     }
 
     /// <summary>
@@ -53,7 +46,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     {
         var sql =
             @"SELECT * FROM mobile_statistics";
-        var result = await dbconnection.QueryAsync<MobileStatisticsItem>(sql, dbTransaction);
+        var result = await dbTransaction.Connection.QueryAsync<MobileStatisticsItem>(sql, dbTransaction);
 
         return result.ToList();
     }
@@ -67,7 +60,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     {
         var sql =
             @"SELECT * FROM mobile_statistics where Id=@Id";
-        return await dbconnection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id }, dbTransaction);
+        return await dbTransaction.Connection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id }, dbTransaction);
     }
 
     /// <summary>
@@ -82,6 +75,6 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
                 last_statistics = @LastStatistics,  
                 version_client = @VersionClient,
                 type = @Type where id=@Id";
-        await dbconnection.ExecuteAsync(sql, entity, dbTransaction);
+        await dbTransaction.Connection.ExecuteAsync(sql, entity, dbTransaction);
     }
 }

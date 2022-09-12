@@ -29,7 +29,6 @@ builder.Services.AddSignalR(h =>
     h.MaximumReceiveMessageSize = 102400000;
     h.EnableDetailedErrors = true;
 });
-builder.Services.AddSingleton<TimerManager>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder

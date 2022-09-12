@@ -13,7 +13,7 @@ public class MobileStatisticsIntegrationTests : IClassFixture<TestingWebAppFacto
 {
     private HttpClient httpClient;
 
-    private MobileStatisticsCreateModel fakeModel = new()
+    private MobileStatisticsItem fakeModel = new()
     {
         Id = Guid.NewGuid(),
         Title = "a1",
@@ -21,37 +21,6 @@ public class MobileStatisticsIntegrationTests : IClassFixture<TestingWebAppFacto
         VersionClient = "1.2.2",
         Type = "windows"
     };
-    /// <summary>
-    /// Модель для тестов.
-    /// </summary>
-    public sealed class MobileStatisticsCreateModel
-    {
-        /// <summary>
-        ///     Уникальный ключ мобильной статистики.
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        ///     Название мобильной статистики.
-        /// </summary>
-        public string? Title { get; set; }
-
-        /// <summary>
-        ///     Дата последней статистики.
-        /// </summary>
-        public DateTime LastStatistics { get; set; }
-
-        /// <summary>
-        ///     Версия клиента.
-        /// </summary>
-        public string? VersionClient { get; set; }
-
-        /// <summary>
-        ///     Тип статистики.
-        /// </summary>
-        public string? Type { get; set; }
-    }
-
     /// <summary>
     /// Конструктор для создания подключения к проекту.
     /// </summary>
@@ -110,7 +79,7 @@ public class MobileStatisticsIntegrationTests : IClassFixture<TestingWebAppFacto
         Assert.True(Equal(resultFromDb!, fakeModel));
     }
 
-    private static bool Equal(MobileStatisticsItem result, MobileStatisticsCreateModel createModel)
+    private static bool Equal(MobileStatisticsItem result, MobileStatisticsItem createModel)
     {
         return result.LastStatistics.EqualWithoutHours(createModel.LastStatistics)
                && result?.Title == createModel?.Title

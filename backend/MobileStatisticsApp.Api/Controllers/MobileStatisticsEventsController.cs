@@ -16,7 +16,6 @@ namespace MobileStatisticsApp.Api.Controllers;
 public class MobileStatisticsEventsController : ControllerBase
 {
     private readonly IHubContext<MobileStatisticsEventsHub> hub;
-    private readonly TimerManager timer;
     private readonly ILogger<MobileStatisticsEventsController> logger;
     private readonly IUnitOfWork unitOfWork;
 
@@ -25,14 +24,13 @@ public class MobileStatisticsEventsController : ControllerBase
     /// </summary>
     /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
+    /// <param name="hub">Сохраняет значение логов.</param>
     public MobileStatisticsEventsController(
         IHubContext<MobileStatisticsEventsHub> hub,
-        TimerManager timer,
         IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsEventsController> logger)
     {
         this.hub = hub;
-        this.timer = timer;
         this.unitOfWork = unitOfWork;
         this.logger = logger;
     }
@@ -75,14 +73,7 @@ public class MobileStatisticsEventsController : ControllerBase
         await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
         unitOfWork.CommitAndDispose();
         logger.LogInformation("Create event.");
-        if (!timer.IsTimerStarted)
-        {
-            timer.PrepareTimer(() =>
-                hub.Clients.All.SendAsync(
-                    "TransferData", mobileStatisticsEvents
-                )
-            );
-        }
+        await hub.Clients.All.SendAsync("TransferData", mobileStatisticsEvents);
         return Ok();
     }
 }

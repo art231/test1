@@ -28,4 +28,24 @@ public class MobileStatisticsEvent
     ///     Версия клиента.
     /// </summary>
     public string? Description { get; set; }
+    /// <summary>
+    /// Фабрика создания элемента.
+    /// </summary>
+    /// <param name="id">Уникальный номер события.</param>
+    /// <param name="mobileStatisticsId">Уникальный номер статистики.</param>
+    /// <param name="date">Время.</param>
+    /// <param name="name">Название.</param>
+    /// <param name="description">Описание.</param>
+    /// <returns>Новый объект фабрики.</returns>
+    public MobileStatisticsEvent CreateNewEvent(Guid id, Guid mobileStatisticsId, DateTime date, string? name, string? description)
+    {
+        return new MobileStatisticsEvent()
+        {
+            Id = Guid.NewGuid(),
+            MobileStatisticsId = mobileStatisticsId,
+            Date = date,
+            Name = name,
+            Description = description
+        };
+    }
 }
