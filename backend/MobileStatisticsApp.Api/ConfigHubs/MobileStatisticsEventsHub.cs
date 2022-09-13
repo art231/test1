@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace MobileStatisticsApp.Api.ConfigHubs;
 /// <summary>
-/// Слушатель для отправки сообщений.
+/// Хаб запросов для канала связи.
 /// </summary>
 public class MobileStatisticsEventsHub : Hub
 {

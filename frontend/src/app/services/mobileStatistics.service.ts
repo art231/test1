@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { MobileStatistics } from '../models/mobileStatistics.model';
 import { environment } from 'src/environments/environment';
 
@@ -16,9 +17,11 @@ export class MobileStatisticsService {
 
   constructor(private http: HttpClient) { }
   
-
+  handleError:any;
   getAll(): Observable<MobileStatistics[]> {
-    return this.http.get<MobileStatistics[]>(baseUrl);
+    return this.http
+      .get<MobileStatistics[]>(baseUrl)
+      .pipe(catchError(this.handleError));
   }
   get(id: any): Observable<MobileStatistics> {
     return this.http.get<MobileStatistics>(`${baseUrl}/${id}`);

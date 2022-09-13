@@ -10,23 +10,16 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepository
 {
-    /// <summary>
-    /// Подключение базы данных.
-    /// </summary>
-    private readonly IDbConnection dbconnection;
-
     private readonly IDbTransaction dbTransaction;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
-    /// <param name="dbconnection">Соединение.</param>
     /// <param name="dbTransaction"> Параметр транзакции.</param>
-    public MobileStatisticsEventsRepository(IDbConnection dbconnection,
+    public MobileStatisticsEventsRepository(
         IDbTransaction dbTransaction)
     {
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-        this.dbconnection = dbconnection;
+        RepositoryExtensions.AddUnderScores();
         this.dbTransaction = dbTransaction;
     }
 
@@ -37,11 +30,10 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task CreateEventsAsync(IEnumerable<MobileStatisticsEvent> entities)
     {
-        foreach (var entity in entities) entity.Id = Guid.NewGuid();
         var sql =
             @"INSERT INTO mobile_statistics_events (mobile_statistics_id, id, Name, Date, description)
             VALUES(@MobileStatisticsId, @Id, @Name, @Date, @Description);";
-        await dbconnection.ExecuteAsync(sql, entities, dbTransaction);
+        await dbTransaction.Connection.ExecuteAsync(sql, entities, dbTransaction);
     }
 
     /// <summary>
@@ -52,8 +44,8 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid mobileStatisticsId)
     {
         var sql =
-            @"SELECT * FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
-        return await dbconnection.QueryAsync<MobileStatisticsEvent>(sql,
+            @"SELECT  id, mobile_statistics_id as MobileStatisticsId, date, name, description FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
+        return await dbTransaction.Connection.QueryAsync<MobileStatisticsEvent>(sql,
             new { MobileStatisticsId = mobileStatisticsId }, dbTransaction);
     }
 }

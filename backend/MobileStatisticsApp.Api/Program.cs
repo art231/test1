@@ -1,5 +1,4 @@
 using System.Data;
-using System.Net;
 using Mapster;
 using MobileStatisticsApp.Api;
 using MobileStatisticsApp.Api.ConfigHubs;
@@ -31,7 +30,6 @@ builder.Services.AddSignalR(h =>
     h.EnableDetailedErrors = true;
 });
 
-builder.Services.AddSingleton<TimerManager>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder

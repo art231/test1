@@ -4,7 +4,6 @@ import { MobileStatisticsEvents } from 'src/app/models/mobileStatisticsEvents.mo
 import { MobileStatisticsService } from 'src/app/services/mobileStatistics.service';
 import { MobileStatisticsWithEventsService } from 'src/app/services/mobileStatisticsWithEvents.service';
 import { MobileStatisticsSignalRService } from 'src/app/services/mobileStatisticsSignalR.service';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-mobileStatistics-list',
@@ -23,8 +22,7 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
 
   constructor(private mobileStatisticsService: MobileStatisticsService,
     private mobileStatisticsWithEventsService: MobileStatisticsWithEventsService,
-    private mobileStatisticsSignalRService: MobileStatisticsSignalRService,
-    private http: HttpClient
+    private mobileStatisticsSignalRService: MobileStatisticsSignalRService
   ) { }
 
   ngOnInit(): void {
@@ -64,7 +62,6 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.mobileStatisticsEvents = data.events;
-          console.log("evet",this.currentMobileStatistics);
         },
         error: (e) => console.error(e)
       });

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using MobileStatistics.Application;
 using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
+using MobileStatisticsApp.Api.Models;
 using MobileStatisticsApp.Core.Entities;
 
 namespace MobileStatisticsApp.Api.Controllers;
@@ -16,7 +17,6 @@ namespace MobileStatisticsApp.Api.Controllers;
 public class MobileStatisticsEventsController : ControllerBase
 {
     private readonly IHubContext<MobileStatisticsEventsHub> hub;
-    private readonly TimerManager timer;
     private readonly ILogger<MobileStatisticsEventsController> logger;
     private readonly IUnitOfWork unitOfWork;
 
@@ -25,16 +25,14 @@ public class MobileStatisticsEventsController : ControllerBase
     /// </summary>
     /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
-    /// <param name="hub">Подключение слушателя.</param>
+    /// <param name="hub">Сохраняет значение логов.</param>
     /// <param name="timer">Таймер.</param>
     public MobileStatisticsEventsController(
         IHubContext<MobileStatisticsEventsHub> hub,
-        TimerManager timer,
         IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsEventsController> logger)
     {
         this.hub = hub;
-        this.timer = timer;
         this.unitOfWork = unitOfWork;
         this.logger = logger;
     }
@@ -68,23 +66,25 @@ public class MobileStatisticsEventsController : ControllerBase
     /// <summary>
     /// Создание нового события.
     /// </summary>
-    /// <param name="mobileStatisticsEvents">Сущность нового события.</param>
+    /// <param name="mobileStatisticsEventsCreateModel">Сущность нового события.</param>
     /// <returns>Ок - если создалось.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
+    public async Task<IActionResult> CreateEventById(IEnumerable<CreateMobileStatisticsEventModel> mobileStatisticsEventsCreateModel)
     {
-        await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
+        var newListEvents = new List<MobileStatisticsEvent>();
+        foreach(var @event in mobileStatisticsEventsCreateModel)
+        {
+            newListEvents.Add(MobileStatisticsEvent.CreateNewEvent(
+                @event.MobileStatisticsId,
+                @event.Date,
+                @event.Name,
+                @event.Description));
+        }
+        await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(newListEvents);
         unitOfWork.CommitAndDispose();
         logger.LogInformation("Create event.");
-        if (!timer.IsTimerStarted)
-        {
-            timer.PrepareTimer(() =>
-                hub.Clients.All.SendAsync(
-                    "TransferData", mobileStatisticsEvents
-                )
-            );
-        }
+        await hub.Clients.All.SendAsync("TransferData", newListEvents);
         return Ok();
     }
 }
