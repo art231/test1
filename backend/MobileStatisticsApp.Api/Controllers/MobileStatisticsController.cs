@@ -1,6 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using MobileStatistics.Application;
+using MobileStatisticsApp.Api.Models;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Dtos;
 
@@ -63,14 +64,18 @@ public class MobileStatisticsController : ControllerBase
     /// <summary>
     /// Добавление статистики.
     /// </summary>
-    /// <param name="mobileStatistics">новые параметры мобильной статистики.</param>
+    /// <param name="mobileStatisticsCreateModel">новые параметры мобильной статистики.</param>
     /// <returns>true если статистика добавилась.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Add(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> Add(MobileStatisticsCreateModel mobileStatisticsCreateModel)
     {
+        var mobileStatistics = MobileStatisticsItem.CreateMobileStatisticsItem(
+            mobileStatisticsCreateModel.Title,
+            mobileStatisticsCreateModel.LastStatistics,
+            mobileStatisticsCreateModel.VersionClient,
+            mobileStatisticsCreateModel.Type);
         logger.LogInformation("Add new mobile statistics.");
-        mobileStatistics.Id = Guid.NewGuid();
         await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
         unitOfWork.CommitAndDispose();
         return Ok();
@@ -79,13 +84,21 @@ public class MobileStatisticsController : ControllerBase
     /// <summary>
     /// Обновление мобильной статистики.
     /// </summary>
-    /// <param name="mobileStatistics">Данные для изменениня.</param>
+    /// <param name="mobileStatisticsUpdateModel">Данные для изменениня.</param>
     /// <returns>Отображение что данные изменились.</returns>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsUpdateModel mobileStatisticsUpdateModel)
     {
-        await unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
+        MobileStatisticsItem getItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsUpdateModel.Id);
+        getItem.UpdateMobileStatisticsItem(
+            mobileStatisticsUpdateModel.Id,
+            mobileStatisticsUpdateModel.Title,
+            mobileStatisticsUpdateModel.LastStatistics,
+            mobileStatisticsUpdateModel.VersionClient,
+            mobileStatisticsUpdateModel.Type
+        );
+        await unitOfWork.MobileStatisticsRepository.UpdateAsync(getItem);
         unitOfWork.CommitAndDispose();
         logger.LogInformation("Update mobile statistics.");
         return Ok();

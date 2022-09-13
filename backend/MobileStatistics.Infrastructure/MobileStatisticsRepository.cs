@@ -31,7 +31,6 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task AddAsync(MobileStatisticsItem entity)
     {
-        entity.Id = Guid.NewGuid();
         var sql =
             @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
                 VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
@@ -45,7 +44,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     public async Task<IReadOnlyList<MobileStatisticsItem>> GetAllAsync()
     {
         var sql =
-            @"SELECT * FROM mobile_statistics";
+            @"SELECT id, title, last_statistics as LastStatistics, version_client as VersionClient, type FROM mobile_statistics";
         var result = await dbTransaction.Connection.QueryAsync<MobileStatisticsItem>(sql, dbTransaction);
 
         return result.ToList();
@@ -59,7 +58,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     public async Task<MobileStatisticsItem> GetByIdAsync(Guid id)
     {
         var sql =
-            @"SELECT * FROM mobile_statistics where Id=@Id";
+            @"SELECT id, title, last_statistics as LastStatistics, version_client as VersionClient, type FROM mobile_statistics where Id=@Id";
         return await dbTransaction.Connection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id }, dbTransaction);
     }
 
@@ -70,6 +69,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task UpdateAsync(MobileStatisticsItem entity)
     {
+
         var sql =
             @"UPDATE mobile_statistics SET title = @Title,
                 last_statistics = @LastStatistics,  
