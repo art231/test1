@@ -6,7 +6,6 @@ using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
 using MobileStatisticsApp.Api.Models;
 using MobileStatisticsApp.Core.Entities;
-using MobileStatisticsApp.Infrastructure;
 
 namespace MobileStatisticsApp.Api.Controllers;
 
