@@ -1,4 +1,5 @@
 namespace MobileStatisticsApp.Api;
+
 /// <summary>
 /// Хелпер.
 /// </summary>
