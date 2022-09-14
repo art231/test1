@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MobileStatistics.Application;
 using MobileStatisticsApp.Application.Repositories;
+using MobileStatisticsApp.Infrastructure.Services;
+
 /// <summary>
 /// Регистрация сервисов.
 /// </summary>
@@ -21,5 +23,7 @@ public static class ServiceRegistration
         services.AddTransient<IMobileStatisticsRepository, MobileStatisticsRepository>();
         services.AddTransient<IMobileStatisticsEventsRepository, MobileStatisticsEventsRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped<IRabbitMqService, RabbitMQService>();
     }
 }
