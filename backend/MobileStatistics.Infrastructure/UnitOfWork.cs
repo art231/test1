@@ -8,7 +8,7 @@ namespace MobileStatisticsApp.Infrastructure;
 /// <summary>
 ///     Объединения репозитариев.
 /// </summary>
-public class UnitOfWork : IUnitOfWork, IDisposable
+public class UnitOfWork : IUnitOfWork
 {
     private IDbTransaction dbTransaction;
 
@@ -50,20 +50,5 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         {
             dbTransaction.Rollback();
         }
-    }
-    /// <summary>
-    /// Коммит и очистка памяти.
-    /// </summary>
-    public void CommitAndDispose()
-    {
-        Commit();
-        Dispose();
-    }
-    /// <summary>
-    /// Очистка памяти.
-    /// </summary>
-    public void Dispose()
-    {
-        dbTransaction.Dispose();
     }
 }

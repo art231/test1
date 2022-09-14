@@ -6,6 +6,7 @@ using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
 using MobileStatisticsApp.Api.Models;
 using MobileStatisticsApp.Core.Entities;
+using MobileStatisticsApp.Infrastructure;
 
 namespace MobileStatisticsApp.Api.Controllers;
 
@@ -52,7 +53,7 @@ public class MobileStatisticsEventsController : ControllerBase
 
         IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
         MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
-        unitOfWork.CommitAndDispose();
+        unitOfWork.Commit();
         logger.LogInformation("Get events.");
         var result = new MobileStatisticsWithEventsDto
         {
@@ -72,7 +73,7 @@ public class MobileStatisticsEventsController : ControllerBase
     public async Task<IActionResult> CreateEventById(IEnumerable<CreateMobileStatisticsEventModel> mobileStatisticsEventsCreateModel)
     {
         var newListEvents = new List<MobileStatisticsEvent>();
-        foreach(var @event in mobileStatisticsEventsCreateModel)
+        foreach (CreateMobileStatisticsEventModel @event in mobileStatisticsEventsCreateModel)
         {
             newListEvents.Add(MobileStatisticsEvent.CreateNewEvent(
                 @event.MobileStatisticsId,
@@ -80,10 +81,11 @@ public class MobileStatisticsEventsController : ControllerBase
                 @event.Name,
                 @event.Description));
         }
+
         await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(newListEvents);
-        unitOfWork.CommitAndDispose();
+        unitOfWork.Commit();
         logger.LogInformation("Create event.");
-        await hub.Clients.All.SendAsync("TransferData", newListEvents);
+        await MobileStatisticsEventsHub.Send(hub, newListEvents);
         return Ok();
     }
 }
