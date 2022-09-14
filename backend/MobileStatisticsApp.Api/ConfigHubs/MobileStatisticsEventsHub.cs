@@ -3,18 +3,6 @@ using MobileStatisticsApp.Core.Entities;
 
 namespace MobileStatisticsApp.Api.ConfigHubs;
 /// <summary>
-/// Интерфейс отправок сообщений.
-/// </summary>
-public interface IMobileStatisticsEventsHub
-{
-    /// <summary>
-    /// Отправка сообщений.
-    /// </summary>
-    /// <param name="message">Тело сообщения.</param>
-    /// <returns></returns>
-    Task Send(IEnumerable<MobileStatisticsEvent> message);
-}
-/// <summary>
 /// Хаб запросов для канала связи.
 /// </summary>
 public class MobileStatisticsEventsHub : Hub
