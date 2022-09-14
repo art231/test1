@@ -1,6 +1,6 @@
 namespace MobileStatisticsApp.Api.Models;
 /// <summary>
-/// 
+/// Модель создания нового события.
 /// </summary>
 public sealed record CreateMobileStatisticsEventModel
 {
