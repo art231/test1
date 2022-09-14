@@ -1,29 +1,34 @@
-version: '3.7'
+
+
+version: "3.8"
+
 services:
-    reverseproxy:
-        image: reverseproxy
-        container_name: "reverseproxy"
-        ports:
-            - "8081:81"
-            - 443:443
-        restart: always
-    
-    postgres:
-        image: postgres:latest
-        container_name: postgresql
-        environment:
-            - POSTGRES_USER=myusername
-            - POSTGRES_PASSWORD=mypassword
-        ports:
-            - 5432:5432
-        volumes:
-            - /var/lib/docker/volumes/postgres/_data:/var/lib/postgresql/data
-        
-    mobilestatisticsapp.api:
-        depends_on:
-            - reverseproxy
-        image: mobilestatisticsapp.api
-        container_name: mobilestatisticsapp.api
-        restart: always
-        volumes:
-          - /srv/mobilestatisticsapp.api:/app/App_Data
+  database:
+    container_name: postgresql
+    image: postgres
+    restart: unless-stopped
+    env_file:
+      - database.env
+    ports:
+      - "5439:5432"
+  api:
+    container_name: mobilestatisticsapp.api
+    restart: unless-stopped
+    build:
+      context: server
+    ports:
+      - 6578:8222
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8800
+    depends_on:
+      - database
+  web:
+    container_name: web
+    restart: unless-stopped
+    build:
+     context: client
+    ports:
+      - '8080:80'
+    depends_on:
+      - api
