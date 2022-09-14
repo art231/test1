@@ -20,12 +20,4 @@ public interface IUnitOfWork
     /// Завершение транзакции.
     /// </summary>
     void Commit();
-    /// <summary>
-    /// Очистка данных транзакции.
-    /// </summary>
-    void Dispose();
-    /// <summary>
-    /// Коммит и очистка.
-    /// </summary>
-    void CommitAndDispose();
 }

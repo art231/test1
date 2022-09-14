@@ -38,11 +38,11 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsDto>))]
     public async Task<IActionResult> GetAll()
     {
-        IReadOnlyList<MobileStatisticsItem>? statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
-        unitOfWork.CommitAndDispose();
+        IReadOnlyList<MobileStatisticsItem> statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
+        unitOfWork.Commit();
         logger.LogInformation("Get data.");
         var result = statistics.Adapt<List<MobileStatisticsDto>>();
-        return Ok(result);
+        return await Task.FromResult<IActionResult>(Ok(result));
     }
 
     /// <summary>
@@ -54,8 +54,12 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MobileStatisticsDto))]
     public async Task<IActionResult> GetById(Guid id)
     {
-        MobileStatisticsItem? statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
-        unitOfWork.CommitAndDispose();
+        if (id == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
+        MobileStatisticsItem statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
+        unitOfWork.Commit();
         logger.LogInformation("Get by id Mobile Statistics.");
         var result = statisticsItem.Adapt<MobileStatisticsDto>();
         return Ok(result);
@@ -77,8 +81,9 @@ public class MobileStatisticsController : ControllerBase
             mobileStatisticsCreateModel.Type);
         logger.LogInformation("Add new mobile statistics.");
         await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
-        unitOfWork.CommitAndDispose();
-        return Ok();
+        unitOfWork.Commit();
+
+        return await Task.FromResult<IActionResult>(Ok());
     }
 
     /// <summary>
@@ -99,7 +104,8 @@ public class MobileStatisticsController : ControllerBase
             mobileStatisticsUpdateModel.Type
         );
         await unitOfWork.MobileStatisticsRepository.UpdateAsync(getItem);
-        unitOfWork.CommitAndDispose();
+        unitOfWork.Commit();
+
         logger.LogInformation("Update mobile statistics.");
         return Ok();
     }

@@ -44,7 +44,7 @@ var serviceScopeFactory = app.Services.GetService<IServiceScopeFactory>();
 using (IServiceScope scope = serviceScopeFactory!.CreateScope())
 {
     var createDb = scope.ServiceProvider.GetRequiredService<DapperDatabase>();
-    createDb.CreateDatabase("test1");
+    createDb.CreateDatabase(builder.Configuration["CreateDatabase"]);
 }
 
 if (app.Environment.IsDevelopment())
