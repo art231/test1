@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiMobileStatisticsUrl: 'http://localhost:49176/mobileStatistics',
+  apiMobileStatisticsUrl: 'http://localhost:63060/mobileStatistics',
   apiMobileStatisticsEventUrl: 'http://localhost:63060/mobileStatisticsEvents'
 };
 

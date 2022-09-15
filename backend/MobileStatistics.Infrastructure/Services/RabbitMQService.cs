@@ -41,17 +41,19 @@ namespace MobileStatisticsApp.Infrastructure.Services
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
             channel.QueueDeclare(queue: this.configuration["Rabbitmq:Client:Queue"],
-                durable: false,
+                durable: true,
                 exclusive: false,
                 autoDelete: false,
                 arguments: null);
 
             var body = Encoding.UTF8.GetBytes(message);
-
+            IBasicProperties basicProperties = channel.CreateBasicProperties();
+            basicProperties.Persistent = true;
             channel.BasicPublish(exchange: string.Empty, 
                 routingKey: this.configuration["Rabbitmq:Client:Queue"],
-                basicProperties: null,
+                basicProperties: basicProperties,
                 body: body);
+
         }
     }
 }
