@@ -55,7 +55,7 @@ public class MobileStatisticsEventsController : ControllerBase
             return BadRequest("ID is empty.");
         }
 
-        IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
+        IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetListEventsByIdAsync(mobileStatisticsId);
         MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
         if (mobileStatistics == null)
         {
@@ -103,6 +103,51 @@ public class MobileStatisticsEventsController : ControllerBase
         unitOfWork.Commit();
         logger.LogInformation("Create event.");
         await MobileStatisticsEventsHub.Send(hub, newListEvents);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Обновление события.
+    /// </summary>
+    /// <param name="mobileStatisticsEvent">Модель обновления события.</param>
+    /// <returns>Успешное выполнение.</returns>
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdateAsync(UpdateMobileStatisticsEventModel mobileStatisticsEvent)
+    {
+        if (mobileStatisticsEvent.Id == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
+
+        MobileStatisticsEvent @event = await unitOfWork.MobileStatisticsEventsRepository.GetEventByIdAsync(mobileStatisticsEvent.Id);
+
+        await unitOfWork.MobileStatisticsEventsRepository.UpdateEventAsync(
+            @event.UpdateEvent(
+                @event.MobileStatisticsId,
+                @event.Date,
+                @event.Name,
+                mobileStatisticsEvent.Description));
+        unitOfWork.Commit();
+        return Ok();
+    }
+
+    /// <summary>
+    /// Удаление события.
+    /// </summary>
+    /// <param name="mobileStatisticsEventId">Ключ события.</param>
+    /// <returns>Успешное выполнение.</returns>
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> DeleteByIdAsync(Guid mobileStatisticsEventId)
+    {
+        if (mobileStatisticsEventId == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
+
+        await unitOfWork.MobileStatisticsEventsRepository.DeleteAsync(mobileStatisticsEventId);
+        unitOfWork.Commit();
         return Ok();
     }
 }

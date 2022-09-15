@@ -32,7 +32,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     {
         var sql =
             @"INSERT INTO mobile_statistics_events (mobile_statistics_id, id, Name, Date, description)
-            VALUES(@MobileStatisticsId, @Id, @Name, @Date, @Description);";
+                VALUES(@MobileStatisticsId, @Id, @Name, @Date, @Description);";
         await dbTransaction.Connection.ExecuteAsync(sql, entities, dbTransaction);
     }
 
@@ -44,8 +44,21 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid mobileStatisticsId)
     {
         var sql =
-            @"SELECT  id, mobile_statistics_id as MobileStatisticsId, date, name, description FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
+            @"SELECT  id, mobile_statistics_id as MobileStatisticsId, date, name, description 
+                FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
         return await dbTransaction.Connection.QueryAsync<MobileStatisticsEvent>(sql,
             new { MobileStatisticsId = mobileStatisticsId }, dbTransaction);
+    }
+    /// <summary>
+    /// Удаление события мобильной статистики.
+    /// </summary>
+    /// <param name="mobileStatisticsEventId">Ключ для удаления.</param>
+    /// <returns>Выполнение удаления события.</returns>
+    public async Task DeleteAsync(Guid mobileStatisticsEventId)
+    {
+        var sql =
+            @"DELETE FROM public.mobile_statistics_events
+	            WHERE id = @MobileStatisticsEventId;";
+        await dbTransaction.Connection.ExecuteAsync(sql, new { MobileStatisticsEventId = mobileStatisticsEventId }, dbTransaction);
     }
 }
