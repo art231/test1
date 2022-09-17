@@ -3,7 +3,7 @@
 /// <summary>
 ///     Модель мобильной статистики.
 /// </summary>
-public sealed class MobileStatisticsItem
+public sealed class MobileStatisticsItem 
 {
     /// <summary>
     ///     Конструктор мобильной статистики.

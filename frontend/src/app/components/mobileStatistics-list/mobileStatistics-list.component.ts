@@ -14,6 +14,7 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
   mobileStatistics?: MobileStatistics[];
   currentMobileStatistics: MobileStatistics = {};
   mobileStatisticsEvents?: MobileStatisticsEvents[];
+  currentMobileStatisticsEvent: MobileStatisticsEvents = {};
   currentIndex = -1;
   title = '';
   dataListener?:MobileStatisticsEvents[]
@@ -32,10 +33,15 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
     this.mobileStatisticsSignalRService.startConnection();
     this.mobileStatisticsSignalRService.addTransferChartDataListener();
   }
-  setActiveMobileStatistics(mobileStatisticsItem: MobileStatistics, mobileStatisticsEventsItem: MobileStatisticsEvents[], index: number): void {
+  setActiveMobileStatistics(mobileStatisticsItem: MobileStatistics,
+     mobileStatisticsEventsItem: MobileStatisticsEvents[],
+     currentMobileStatisticsEvent: MobileStatisticsEvents,
+      index: number): void {
+    
     this.currentMobileStatistics = mobileStatisticsItem;
     this.mobileStatisticsEvents = mobileStatisticsEventsItem;
     this.currentIndex = index;
+    this.currentMobileStatisticsEvent = currentMobileStatisticsEvent;
   }
   retrieveMobileStatistics(): void {
     this.mobileStatisticsService.getAll()
@@ -57,8 +63,9 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
       this.routerOnDeactivate();
     }
   }
+  
   getMobileStatisticsEventsById(id: string): void {
-    this.mobileStatisticsWithEventsService.get(id)
+    this.mobileStatisticsWithEventsService.getEventsByMobileStatisticsId(id)
       .subscribe({
         next: (data) => {
           this.mobileStatisticsEvents = data.events;

@@ -32,8 +32,7 @@
         </div>
       </div>
       <div>
-        <input type="checkbox" id="scales" name="scales" checked
-         (change)="checkValue($event)">
+        <input type="checkbox" id="scales" name="scales" checked (change)="checkValue($event)">
         <label for="scales">Scales</label>
       </div>
       <div class="col-sm">
@@ -55,8 +54,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let mobileStatisticsEvent of mobileStatisticsEvents; let i = index"
-                (click)="getMobileStatisticsEventsById(mobileStatisticsEvent.id)">
+              <tr *ngFor="let mobileStatisticsEvent of mobileStatisticsEvents; let i = index"  [routerLink]="['event', mobileStatisticsEvent.id]">
                 <td>{{ mobileStatisticsEvent.date }}</td>
                 <td>{{ mobileStatisticsEvent.name }}</td>
                 <td>{{ mobileStatisticsEvent.description }}</td>

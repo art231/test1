@@ -48,6 +48,7 @@ public class MobileStatisticsEventsController : ControllerBase
     /// <returns>Список событий мобильной статистики.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsEventsDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetEventsById(Guid mobileStatisticsId)
     {
         if (mobileStatisticsId == Guid.Empty)
@@ -70,6 +71,28 @@ public class MobileStatisticsEventsController : ControllerBase
             Events = events.Adapt<IEnumerable<MobileStatisticsEventsDto>>(),
         };
         return Ok(result);
+    }
+    /// <summary>
+    /// Получение единственного события.
+    /// </summary>
+    /// <param name="mobileStatisticsEventId">Ключ события.</param>
+    /// <returns>Событие.</returns>
+    [HttpGet("event")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MobileStatisticsEventsDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetEventById(Guid mobileStatisticsEventId)
+    {
+        if (mobileStatisticsEventId == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
+        MobileStatisticsEvent @event = await unitOfWork.MobileStatisticsEventsRepository.GetEventByIdAsync(mobileStatisticsEventId);
+        if (@event == null)
+        {
+            return BadRequest("Event is empty.");
+        }
+        unitOfWork.Commit();
+        return Ok(@event);
     }
 
     /// <summary>
@@ -113,6 +136,7 @@ public class MobileStatisticsEventsController : ControllerBase
     /// <returns>Успешное выполнение.</returns>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateAsync(UpdateMobileStatisticsEventModel mobileStatisticsEvent)
     {
         if (mobileStatisticsEvent.Id == Guid.Empty)
@@ -121,13 +145,12 @@ public class MobileStatisticsEventsController : ControllerBase
         }
 
         MobileStatisticsEvent @event = await unitOfWork.MobileStatisticsEventsRepository.GetEventByIdAsync(mobileStatisticsEvent.Id);
-
-        await unitOfWork.MobileStatisticsEventsRepository.UpdateEventAsync(
-            @event.UpdateEvent(
-                @event.MobileStatisticsId,
-                @event.Date,
-                @event.Name,
-                mobileStatisticsEvent.Description));
+        @event.UpdateEvent(
+            @event.MobileStatisticsId,
+            @event.Date,
+            @event.Name,
+            mobileStatisticsEvent.Description);
+        await unitOfWork.MobileStatisticsEventsRepository.UpdateEventAsync(@event);
         unitOfWork.Commit();
         return Ok();
     }
@@ -137,15 +160,15 @@ public class MobileStatisticsEventsController : ControllerBase
     /// </summary>
     /// <param name="mobileStatisticsEventId">Ключ события.</param>
     /// <returns>Успешное выполнение.</returns>
-    [HttpDelete]
+    [HttpDelete("event")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteByIdAsync(Guid mobileStatisticsEventId)
     {
         if (mobileStatisticsEventId == Guid.Empty)
         {
             return BadRequest("ID is empty.");
         }
-
         await unitOfWork.MobileStatisticsEventsRepository.DeleteAsync(mobileStatisticsEventId);
         unitOfWork.Commit();
         return Ok();

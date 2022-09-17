@@ -7,7 +7,7 @@ import { MobileStatisticsListComponent } from './components/mobileStatistics-lis
 const routes: Routes = [
   { path: '', redirectTo: 'mobileStatistics', pathMatch: 'full' },
   { path: 'add', component: AddMobileStatisticsComponent },
-  { path: 'mobileStatistics/:id', component: MobileStatisticsUpdateComponent },
+  { path: 'mobileStatistics/event/:id', component: MobileStatisticsUpdateComponent },
   { path: 'mobileStatistics', component: MobileStatisticsListComponent },
 ];
 

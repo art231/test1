@@ -58,6 +58,7 @@ public class MobileStatisticsController : ControllerBase
         {
             return BadRequest("ID is empty.");
         }
+
         MobileStatisticsItem statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
         unitOfWork.Commit();
         logger.LogInformation("Get by id Mobile Statistics.");
