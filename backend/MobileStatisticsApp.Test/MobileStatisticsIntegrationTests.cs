@@ -61,23 +61,6 @@ public async Task GetAllMobileStatistics()
     Assert.Equal(HttpStatusCode.OK, resultCreate.StatusCode);
 }
 
-/// <summary>
-/// Проверка по имени и по дате.
-/// </summary>
-/// <returns></returns>
-[Fact]
-public async Task GetByNameAndDate()
-{
-    var res = await httpClient.GetAsync("/MobileStatistics");
-    Assert.Equal(HttpStatusCode.OK, res.StatusCode);
-
-    var content = await res.Content.ReadAsStringAsync();
-    var responseData = JsonConvert.DeserializeObject<MobileStatisticsItem[]>(content)!;
-    var resultFromDb = responseData.Where(x => x.LastStatistics.Date == fakeModel.LastStatistics.Date
-                                               && x.Title == fakeModel.Title)!.FirstOrDefault();
-    Assert.True(Equal(resultFromDb!, fakeModel));
-}
-
 private static bool Equal(MobileStatisticsItem result, MobileStatisticsItem createModel)
 {
     return result.LastStatistics.EqualWithoutHours(createModel.LastStatistics)
