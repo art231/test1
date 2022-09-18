@@ -10,39 +10,31 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsRepository : IMobileStatisticsRepository
 {
-    /// <summary>
-    /// Подключение базы данных.
-    /// </summary>
-    private readonly IDbConnection dbconnection;
+
+    private readonly IDbTransaction dbTransaction;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
-    /// <param name="dbconnection">Соединение.</param>
-    public MobileStatisticsRepository(IDbConnection dbconnection)
+    /// <param name="dbTransaction">Параметр транзакции.</param>
+    public MobileStatisticsRepository(
+        IDbTransaction dbTransaction)
     {
-        this.dbconnection = dbconnection;
+        RepositoryExtensions.AddUnderScores();
+        this.dbTransaction = dbTransaction;
     }
 
     /// <summary>
     /// Добавление новой сущности.
     /// </summary>
     /// <param name="entity">Новая сущность.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task AddAsync(MobileStatisticsItem entity)
     {
-        dbconnection.Open();
-        try
-        {
-            entity.Id = Guid.NewGuid();
-            var sql =
-                @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
+        var sql =
+            @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
                 VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
-            await dbconnection.ExecuteAsync(sql, entity);
-        }
-        finally
-        {
-            dbconnection.Close();
-        }
+        await dbTransaction.Connection.ExecuteAsync(sql, entity, dbTransaction);
     }
 
     /// <summary>
@@ -51,19 +43,11 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>Весь список.</returns>
     public async Task<IReadOnlyList<MobileStatisticsItem>> GetAllAsync()
     {
-        dbconnection.Open();
-        try
-        {
-            var sql =
-                @"SELECT * FROM mobile_statistics";
-            var result = await dbconnection.QueryAsync<MobileStatisticsItem>(sql);
+        var sql =
+            @"SELECT id, title, last_statistics as LastStatistics, version_client as VersionClient, type FROM mobile_statistics";
+        var result = await dbTransaction.Connection.QueryAsync<MobileStatisticsItem>(sql, dbTransaction);
 
-            return result.ToList();
-        }
-        finally
-        {
-            dbconnection.Close();
-        }
+        return result.ToList();
     }
 
     /// <summary>
@@ -73,38 +57,24 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     /// <returns>объект.</returns>
     public async Task<MobileStatisticsItem> GetByIdAsync(Guid id)
     {
-        dbconnection.Open();
-        try
-        {
-            var sql =
-                @"SELECT * FROM mobile_statistics where Id=@Id";
-            return await dbconnection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id });
-        }
-        finally
-        {
-            dbconnection.Close();
-        }
+        var sql =
+            @"SELECT id, title, last_statistics as LastStatistics, version_client as VersionClient, type FROM mobile_statistics where Id=@Id";
+        return await dbTransaction.Connection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id }, dbTransaction);
     }
 
     /// <summary>
     /// Обновление объекта.
     /// </summary>
     /// <param name="entity">Объект для изменения.</param>
+    /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task UpdateAsync(MobileStatisticsItem entity)
     {
-        dbconnection.Open();
-        try
-        {
-            var sql =
-                @"UPDATE mobile_statistics SET title = @Title,
+
+        var sql =
+            @"UPDATE mobile_statistics SET title = @Title,
                 last_statistics = @LastStatistics,  
                 version_client = @VersionClient,
                 type = @Type where id=@Id";
-            await dbconnection.ExecuteAsync(sql, entity);
-        }
-        finally
-        {
-            dbconnection.Close();
-        }
+        await dbTransaction.Connection.ExecuteAsync(sql, entity, dbTransaction);
     }
 }

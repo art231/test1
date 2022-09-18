@@ -16,4 +16,8 @@ public interface IUnitOfWork
     ///     Репозитарий событий мобильной статистики.
     /// </summary>
     IMobileStatisticsEventsRepository MobileStatisticsEventsRepository { get; }
+    /// <summary>
+    /// Завершение транзакции.
+    /// </summary>
+    void Commit();
 }

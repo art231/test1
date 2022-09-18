@@ -10,18 +10,17 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepository
 {
-    /// <summary>
-    /// Подключение базы данных.
-    /// </summary>
-    private readonly IDbConnection dbconnection;
+    private readonly IDbTransaction dbTransaction;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
-    /// <param name="dbconnection">Соединение.</param>
-    public MobileStatisticsEventsRepository(IDbConnection dbconnection)
+    /// <param name="dbTransaction"> Параметр транзакции.</param>
+    public MobileStatisticsEventsRepository(
+        IDbTransaction dbTransaction)
     {
-        this.dbconnection = dbconnection;
+        RepositoryExtensions.AddUnderScores();
+        this.dbTransaction = dbTransaction;
     }
 
     /// <summary>
@@ -31,22 +30,23 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task CreateEventsAsync(IEnumerable<MobileStatisticsEvent> entities)
     {
-        dbconnection.Open();
-        try
-        {
-            foreach (var entity in entities)
-            {
-                entity.Id = Guid.NewGuid();
-            }
-            var sql =
-                @"INSERT INTO mobile_statistics_events (mobile_statistics_id, id, Name, Date, description)
+        var sql =
+            @"INSERT INTO mobile_statistics_events (mobile_statistics_id, id, Name, Date, description)
                 VALUES(@MobileStatisticsId, @Id, @Name, @Date, @Description);";
-            await dbconnection.ExecuteAsync(sql, entities);
-        }
-        finally
-        {
-            dbconnection.Close();
-        }
+        await dbTransaction.Connection.ExecuteAsync(sql, entities, dbTransaction);
+    }
+    /// <summary>
+    /// Обновление описания события.
+    /// </summary>
+    /// <param name="entity">Модель для обновления.</param>
+    /// <returns>Выпонление события.</returns>
+    public async Task UpdateEventAsync(MobileStatisticsEvent entity)
+    {
+        var sql =
+            @"UPDATE public.mobile_statistics_events
+	            SET description=@Description
+	            WHERE id=@Id";
+        await dbTransaction.Connection.ExecuteAsync(sql, entity, dbTransaction);
     }
 
     /// <summary>
@@ -54,18 +54,37 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     /// </summary>
     /// <param name="mobileStatisticsId">Уникальный идентификатор.</param>
     /// <returns>Объект событий.</returns>
-    public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid mobileStatisticsId)
+    public async Task<IEnumerable<MobileStatisticsEvent>> GetListEventsByIdAsync(Guid mobileStatisticsId)
     {
-        dbconnection.Open();
-        try
-        {
-            var sql =
-                @"SELECT * FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
-            return await dbconnection.QueryAsync<MobileStatisticsEvent>(sql, new { MobileStatisticsId = mobileStatisticsId });
-        }
-        finally
-        {
-            dbconnection.Close();
-        }
+        var sql =
+            @"SELECT  id, mobile_statistics_id as MobileStatisticsId, date, name, description 
+                FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
+        return await dbTransaction.Connection.QueryAsync<MobileStatisticsEvent>(sql,
+            new { MobileStatisticsId = mobileStatisticsId }, dbTransaction);
+    }
+    /// <summary>
+    /// Получение события мобильной статистики.
+    /// </summary>
+    /// <param name="mobileStatisticsEventId">Ключ события.</param>
+    /// <returns>Событие.</returns>
+    public async Task<MobileStatisticsEvent> GetEventByIdAsync(Guid mobileStatisticsEventId)
+    {
+        var sql =
+            @"SELECT  id, mobile_statistics_id as MobileStatisticsId, date, name, description 
+                FROM mobile_statistics_events where id = @MobileStatisticsEventId";
+        return await dbTransaction.Connection.QuerySingleOrDefaultAsync<MobileStatisticsEvent>(sql,
+            new { MobileStatisticsEventId = mobileStatisticsEventId }, dbTransaction);
+    }
+    /// <summary>
+    /// Удаление события мобильной статистики.
+    /// </summary>
+    /// <param name="mobileStatisticsEventId">Ключ для удаления.</param>
+    /// <returns>Выполнение удаления события.</returns>
+    public async Task DeleteAsync(Guid mobileStatisticsEventId)
+    {
+        var sql =
+            @"DELETE FROM public.mobile_statistics_events
+	            WHERE id = @MobileStatisticsEventId;";
+        await dbTransaction.Connection.ExecuteAsync(sql, new { MobileStatisticsEventId = mobileStatisticsEventId }, dbTransaction);
     }
 }

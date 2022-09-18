@@ -1,6 +1,7 @@
 using System.Data;
 using Mapster;
 using MobileStatisticsApp.Api;
+using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Infrastructure;
@@ -9,7 +10,13 @@ using Npgsql;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped(s =>
+{
+    var conn = s.GetRequiredService<IDbConnection>();
+    conn.Open();
+    return conn.BeginTransaction();
+});
 builder.Services.AddInfrastructure();
 builder.Host.UseSerilog((hbc, lc) => lc
     .ReadFrom.Configuration(hbc.Configuration));
@@ -17,10 +24,28 @@ builder.Host.UseSerilog((hbc, lc) => lc
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR(h =>
+{
+    h.MaximumReceiveMessageSize = 102400000;
+    h.EnableDetailedErrors = true;
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder => builder
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
 WebApplication app = builder.Build();
 
-var createDb = app.Services.GetRequiredService<DapperDatabase>();
-createDb.CreateDatabase("test1");
+var serviceScopeFactory = app.Services.GetService<IServiceScopeFactory>();
+using (IServiceScope scope = serviceScopeFactory!.CreateScope())
+{
+    var createDb = scope.ServiceProvider.GetRequiredService<DapperDatabase>();
+    createDb.CreateDatabase(builder.Configuration["CreateDatabase"]);
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -39,6 +64,7 @@ if (app.Environment.IsDevelopment())
         .AllowCredentials());
 }
 
+app.MapHub<MobileStatisticsEventsHub>("/mobileStatisticsHub");
 app.UseAuthorization();
 
 app.MapControllers();

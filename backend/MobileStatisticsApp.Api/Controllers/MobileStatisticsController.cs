@@ -1,6 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using MobileStatistics.Application;
+using MobileStatisticsApp.Api.Models;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Dtos;
 
@@ -21,7 +22,8 @@ public class MobileStatisticsController : ControllerBase
     /// </summary>
     /// <param name="unitOfWork"><see cref="IUnitOfWork"/>.</param>
     /// <param name="logger">Сохраняет значение логов.</param>
-    public MobileStatisticsController(IUnitOfWork unitOfWork,
+    public MobileStatisticsController(
+        IUnitOfWork unitOfWork,
         ILogger<MobileStatisticsController> logger)
     {
         this.unitOfWork = unitOfWork;
@@ -36,10 +38,11 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsDto>))]
     public async Task<IActionResult> GetAll()
     {
-        IReadOnlyList<MobileStatisticsItem>? statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
+        IReadOnlyList<MobileStatisticsItem> statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
+        unitOfWork.Commit();
         logger.LogInformation("Get data.");
         var result = statistics.Adapt<List<MobileStatisticsDto>>();
-        return Ok(result);
+        return await Task.FromResult<IActionResult>(Ok(result));
     }
 
     /// <summary>
@@ -51,8 +54,13 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MobileStatisticsDto))]
     public async Task<IActionResult> GetById(Guid id)
     {
-        MobileStatisticsItem? statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
+        if (id == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
 
+        MobileStatisticsItem statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
+        unitOfWork.Commit();
         logger.LogInformation("Get by id Mobile Statistics.");
         var result = statisticsItem.Adapt<MobileStatisticsDto>();
         return Ok(result);
@@ -61,28 +69,43 @@ public class MobileStatisticsController : ControllerBase
     /// <summary>
     /// Добавление статистики.
     /// </summary>
-    /// <param name="mobileStatistics">новые параметры мобильной статистики.</param>
+    /// <param name="mobileStatisticsCreateModel">новые параметры мобильной статистики.</param>
     /// <returns>true если статистика добавилась.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Add(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> Add(MobileStatisticsCreateModel mobileStatisticsCreateModel)
     {
+        var mobileStatistics = MobileStatisticsItem.CreateMobileStatisticsItem(
+            mobileStatisticsCreateModel.Title,
+            mobileStatisticsCreateModel.LastStatistics,
+            mobileStatisticsCreateModel.VersionClient,
+            mobileStatisticsCreateModel.Type);
         logger.LogInformation("Add new mobile statistics.");
-        mobileStatistics.Id = Guid.NewGuid();
         await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
-        return Ok();
+        unitOfWork.Commit();
+
+        return await Task.FromResult<IActionResult>(Ok());
     }
 
     /// <summary>
     /// Обновление мобильной статистики.
     /// </summary>
-    /// <param name="mobileStatistics">Данные для изменениня.</param>
+    /// <param name="mobileStatisticsUpdateModel">Данные для изменениня.</param>
     /// <returns>Отображение что данные изменились.</returns>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsUpdateModel mobileStatisticsUpdateModel)
     {
-        await unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
+        MobileStatisticsItem getItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsUpdateModel.Id);
+        getItem.UpdateMobileStatisticsItem(
+            mobileStatisticsUpdateModel.Id,
+            mobileStatisticsUpdateModel.Title,
+            mobileStatisticsUpdateModel.LastStatistics,
+            mobileStatisticsUpdateModel.VersionClient,
+            mobileStatisticsUpdateModel.Type
+        );
+        await unitOfWork.MobileStatisticsRepository.UpdateAsync(getItem);
+        unitOfWork.Commit();
 
         logger.LogInformation("Update mobile statistics.");
         return Ok();

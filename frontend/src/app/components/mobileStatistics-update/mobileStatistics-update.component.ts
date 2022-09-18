@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MobileStatisticsService } from 'src/app/services/mobileStatistics.service';
+import { MobileStatisticsWithEventsService } from 'src/app/services/mobileStatisticsWithEvents.service';
 import { ActivatedRoute } from '@angular/router';
-import { MobileStatistics } from 'src/app/models/mobileStatistics.model';
+import { MobileStatisticsEvents } from 'src/app/models/mobileStatisticsEvents.model';
 
 @Component({
   selector: 'app-mobileStatistics-update',
@@ -12,48 +12,57 @@ export class MobileStatisticsUpdateComponent implements OnInit {
 
   @Input() viewMode = false;
 
-  @Input() currentMobileStatistics: MobileStatistics = { };
+  @Input() currentMobileStatisticsEvent: MobileStatisticsEvents = { };
   
   message = '';
 
   constructor(
-    private mobileStatisticsService: MobileStatisticsService,
+    private mobileStatisticsWithEventsService: MobileStatisticsWithEventsService,
     private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     if (!this.viewMode) {
       this.message = '';
-      this.getMobileStatistics(this.route.snapshot.params["id"]);
+      this.getEvent(this.route.snapshot.params["id"]);
     }
   }
 
-  getMobileStatistics(id: string): void {
-    this.mobileStatisticsService.get(id)
+  getEvent(id: string): void {
+    this.mobileStatisticsWithEventsService.getEventById(id)
       .subscribe({
         next: (data) => {
-          this.currentMobileStatistics = data;
+          this.currentMobileStatisticsEvent = data;
           console.log(data);
         },
         error: (e) => console.error(e)
       });
   }
 
-  updateMobileStatistics(): void {
+  updateMobileStatisticsEvent(): void {
     const data = {
-      id:this.currentMobileStatistics.id,
-      title: this.currentMobileStatistics.title,
-      lastStatistics: this.currentMobileStatistics.lastStatistics,
-      versionClient:this.currentMobileStatistics.versionClient,
-      type:this.currentMobileStatistics.type
+      id:this.currentMobileStatisticsEvent.id,
+      lastStatistics: this.currentMobileStatisticsEvent.mobileStatisticsId,
+      date:this.currentMobileStatisticsEvent.date,
+      name:this.currentMobileStatisticsEvent.name,
+      description:this.currentMobileStatisticsEvent.description
     };
 
     this.message = '';
 
-    this.mobileStatisticsService.update(this.currentMobileStatistics.id, data)
+    this.mobileStatisticsWithEventsService.update(this.currentMobileStatisticsEvent.id, data)
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.message = res.message ? res.message : 'This mobile statistics was updated successfully!';
+        },
+        error: (e) => console.error(e)
+      });
+  }
+  deleteEvent(id: string): void {
+    this.mobileStatisticsWithEventsService.deleteEventById(id)
+      .subscribe({
+        next: (data) => {
+          this.currentMobileStatisticsEvent = data;
+          console.log(data);
         },
         error: (e) => console.error(e)
       });
