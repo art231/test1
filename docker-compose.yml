@@ -1,34 +1,16 @@
-
-
-version: "3.8"
+version: '3.7'
 
 services:
-  database:
-    container_name: postgresql
-    image: postgres
-    restart: unless-stopped
-    env_file:
-      - database.env
-    ports:
-      - "5439:5432"
-  api:
-    container_name: mobilestatisticsapp.api
-    restart: unless-stopped
-    build:
-      context: server
-    ports:
-      - 6578:8222
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8800
-    depends_on:
-      - database
-  web:
-    container_name: web
-    restart: unless-stopped
-    build:
-     context: client
-    ports:
-      - '8080:80'
-    depends_on:
-      - api
+    nginx:
+        image: nginx
+        container_name: reverseproxy
+        ports:
+            - 83:80
+            - 443:443
+        restart: always
+    backend:
+        image: mobilestatisticsapp.api
+        container_name: mobilestatisticsapp
+        restart: always
+        volumes:
+          - /srv/mobilestatisticsapp.api:/app/App_Data
