@@ -1,11 +1,12 @@
 ﻿namespace MobileStatisticsApp.Test;
+
 /// <summary>
-/// Расширение для тестов.
+///     Расширение для тестов.
 /// </summary>
 public static class DateExtensions
 {
     /// <summary>
-    /// Расширение для времени.
+    ///     Расширение для времени.
     /// </summary>
     /// <param name="dt1">1 Параметр сравнения.</param>
     /// <param name="dt2">2 Параметр сравнения.</param>
