@@ -1,7 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using MobileStatistics.Application;
 using MobileStatisticsApp.Api.Models;
+using MobileStatisticsApp.Application.Services;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Dtos;
 
@@ -15,18 +15,18 @@ namespace MobileStatisticsApp.Api.Controllers;
 public class MobileStatisticsController : ControllerBase
 {
     private readonly ILogger<MobileStatisticsController> logger;
-    private readonly IUnitOfWork unitOfWork;
 
+    private readonly IMobileStatisticsService mobileStatisticsService;
     /// <summary>
-    /// Конструктор для логгирования.
+    /// Конструктор мобильной статистики.
     /// </summary>
-    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>.</param>
-    /// <param name="logger">Сохраняет значение логов.</param>
+    /// <param name="mobileStatisticsService">сервис мобильной статистики.</param>
+    /// <param name="logger">Логгирование.</param>
     public MobileStatisticsController(
-        IUnitOfWork unitOfWork,
+        IMobileStatisticsService mobileStatisticsService,
         ILogger<MobileStatisticsController> logger)
     {
-        this.unitOfWork = unitOfWork;
+        this.mobileStatisticsService = mobileStatisticsService;
         this.logger = logger;
     }
 
@@ -38,11 +38,10 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsDto>))]
     public async Task<IActionResult> GetAll()
     {
-        IReadOnlyList<MobileStatisticsItem> statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
-        unitOfWork.Commit();
         logger.LogInformation("Get data.");
+        IReadOnlyList<MobileStatisticsItem> statistics = await this.mobileStatisticsService.GetAllAsync();
         var result = statistics.Adapt<List<MobileStatisticsDto>>();
-        return await Task.FromResult<IActionResult>(Ok(result));
+        return Ok(result);
     }
 
     /// <summary>
@@ -58,9 +57,8 @@ public class MobileStatisticsController : ControllerBase
         {
             return BadRequest("ID is empty.");
         }
-        MobileStatisticsItem statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
-        unitOfWork.Commit();
         logger.LogInformation("Get by id Mobile Statistics.");
+        var statisticsItem = await this.mobileStatisticsService.GetByIdAsync(id);
         var result = statisticsItem.Adapt<MobileStatisticsDto>();
         return Ok(result);
     }
@@ -80,9 +78,7 @@ public class MobileStatisticsController : ControllerBase
             mobileStatisticsCreateModel.VersionClient,
             mobileStatisticsCreateModel.Type);
         logger.LogInformation("Add new mobile statistics.");
-        await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
-        unitOfWork.Commit();
-
+        await this.mobileStatisticsService.AddAsync(mobileStatistics);
         return Ok();
     }
 
@@ -95,7 +91,7 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsUpdateModel mobileStatisticsUpdateModel)
     {
-        MobileStatisticsItem getItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsUpdateModel.Id);
+        MobileStatisticsItem getItem = await this.mobileStatisticsService.GetByIdAsync(mobileStatisticsUpdateModel.Id);
         getItem.UpdateMobileStatisticsItem(
             mobileStatisticsUpdateModel.Id,
             mobileStatisticsUpdateModel.Title,
@@ -103,8 +99,7 @@ public class MobileStatisticsController : ControllerBase
             mobileStatisticsUpdateModel.VersionClient,
             mobileStatisticsUpdateModel.Type
         );
-        await unitOfWork.MobileStatisticsRepository.UpdateAsync(getItem);
-        unitOfWork.Commit();
+        await this.mobileStatisticsService.UpdateAsync(getItem);
 
         logger.LogInformation("Update mobile statistics.");
         return Ok();

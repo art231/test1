@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Repositories;
-using System.Data;
+using MobileStatistics.Application;
 
 namespace MobileStatisticsApp.Infrastructure;
 
@@ -10,18 +10,16 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsRepository : IMobileStatisticsRepository
 {
-
-    private readonly IDbTransaction dbTransaction;
-
     /// <summary>
     /// Конструктор.
     /// </summary>
-    /// <param name="dbTransaction">Параметр транзакции.</param>
-    public MobileStatisticsRepository(
-        IDbTransaction dbTransaction)
+    /// <param name="unitOfWork">Юнит оф ворк.</param>
+    public MobileStatisticsRepository(IUnitOfWork unitOfWork)
     {
-        this.dbTransaction = dbTransaction;
+        this.unitOfWork = unitOfWork;
     }
+
+    private readonly IUnitOfWork unitOfWork;
 
     /// <summary>
     /// Добавление новой сущности.
@@ -33,7 +31,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
         var sql =
             @"INSERT INTO mobile_statistics ( id, title, last_statistics, version_client, type)
                 VALUES(@Id, @Title, @LastStatistics, @VersionClient, @Type);";
-        await dbTransaction.Connection.ExecuteAsync(sql, entity, dbTransaction);
+        await this.unitOfWork.Connection.ExecuteAsync(sql, entity, this.unitOfWork.Transaction);
     }
 
     /// <summary>
@@ -44,7 +42,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     {
         var sql =
             @"SELECT id, title, last_statistics as LastStatistics, version_client as VersionClient, type FROM mobile_statistics";
-        var result = await dbTransaction.Connection.QueryAsync<MobileStatisticsItem>(sql, dbTransaction);
+        var result = await this.unitOfWork.Connection.QueryAsync<MobileStatisticsItem>(sql, this.unitOfWork.Transaction);
 
         return result.ToList();
     }
@@ -58,7 +56,7 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     {
         var sql =
             @"SELECT id, title, last_statistics as LastStatistics, version_client as VersionClient, type FROM mobile_statistics where Id=@Id";
-        return await dbTransaction.Connection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id }, dbTransaction);
+        return await this.unitOfWork.Connection.QuerySingleOrDefaultAsync<MobileStatisticsItem>(sql, new { Id = id }, this.unitOfWork.Transaction);
     }
 
     /// <summary>
@@ -74,6 +72,6 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
                 last_statistics = @LastStatistics,  
                 version_client = @VersionClient,
                 type = @Type where id=@Id";
-        await dbTransaction.Connection.ExecuteAsync(sql, entity, dbTransaction);
+        await this.unitOfWork.Connection.ExecuteAsync(sql, entity, this.unitOfWork.Transaction);
     }
 }

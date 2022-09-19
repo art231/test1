@@ -11,12 +11,18 @@ using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped(s =>
-{
-    var conn = s.GetRequiredService<IDbConnection>();
-    conn.Open();
-    return conn.BeginTransaction();
-});
+//builder.Services.AddTransient<DalSession>(s =>
+//    {
+//        var conn = s.GetRequiredService<IDbConnection>();
+//        conn.Open();
+//        return new DalSession(conn);
+//    });
+//builder.Services.AddScoped(s =>
+//{
+//    var conn = s.GetRequiredService<IDbConnection>();
+//    conn.Open();
+//    return conn.BeginTransaction();
+//});
 builder.Services.AddInfrastructure();
 builder.Host.UseSerilog((hbc, lc) => lc
     .ReadFrom.Configuration(hbc.Configuration));

@@ -1,5 +1,5 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
+using MobileStatistics.Application;
 using MobileStatisticsApp.Application.Repositories;
 using MobileStatisticsApp.Core.Entities;
 
@@ -10,16 +10,15 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepository
 {
-    private readonly IDbTransaction dbTransaction;
+    private readonly IUnitOfWork unitOfWork;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
-    /// <param name="dbTransaction"> Параметр транзакции.</param>
-    public MobileStatisticsEventsRepository(
-        IDbTransaction dbTransaction)
+    /// <param name="unitOfWork">Юнит оф ворк.</param>
+    public MobileStatisticsEventsRepository(IUnitOfWork unitOfWork)
     {
-        this.dbTransaction = dbTransaction;
+        this.unitOfWork = unitOfWork;
     }
 
     /// <summary>
@@ -32,7 +31,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
         var sql =
             @"INSERT INTO mobile_statistics_events (mobile_statistics_id, id, Name, Date, description)
             VALUES(@MobileStatisticsId, @Id, @Name, @Date, @Description);";
-        await dbTransaction.Connection.ExecuteAsync(sql, entities, dbTransaction);
+        await this.unitOfWork.Connection.ExecuteAsync(sql, entities, this.unitOfWork.Transaction);
     }
 
     /// <summary>
@@ -44,7 +43,7 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     {
         var sql =
             @"SELECT  id, mobile_statistics_id as MobileStatisticsId, date, name, description FROM mobile_statistics_events where mobile_statistics_id = @MobileStatisticsId";
-        return await dbTransaction.Connection.QueryAsync<MobileStatisticsEvent>(sql,
-            new { MobileStatisticsId = mobileStatisticsId }, dbTransaction);
+        return await this.unitOfWork.Connection.QueryAsync<MobileStatisticsEvent>(sql,
+            new { MobileStatisticsId = mobileStatisticsId }, this.unitOfWork.Transaction);
     }
 }

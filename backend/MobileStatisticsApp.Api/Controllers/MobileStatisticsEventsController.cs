@@ -1,10 +1,10 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using MobileStatistics.Application;
 using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
 using MobileStatisticsApp.Api.Models;
+using MobileStatisticsApp.Application.Services;
 using MobileStatisticsApp.Core.Entities;
 
 namespace MobileStatisticsApp.Api.Controllers;
@@ -18,22 +18,22 @@ public class MobileStatisticsEventsController : ControllerBase
 {
     private readonly IHubContext<MobileStatisticsEventsHub> hub;
     private readonly ILogger<MobileStatisticsEventsController> logger;
-    private readonly IUnitOfWork unitOfWork;
-
+    private readonly IMobileStatisticsEventsService mobileStatisticsEventsService;
     /// <summary>
-    /// Конструктор для событий.
+    /// Контроллер.
     /// </summary>
-    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
-    /// <param name="logger">Сохраняет значение логов.</param>
-    /// <param name="hub">Сохраняет значение логов.</param>
+    /// <param name="hub">Хаб.</param>
+    /// <param name="logger">Логгер.</param>
+    /// <param name="mobileStatisticsEventsService">Сервис.</param>
     public MobileStatisticsEventsController(
         IHubContext<MobileStatisticsEventsHub> hub,
-        IUnitOfWork unitOfWork,
-        ILogger<MobileStatisticsEventsController> logger)
+        ILogger<MobileStatisticsEventsController> logger,
+        IMobileStatisticsEventsService mobileStatisticsEventsService
+        )
     {
         this.hub = hub;
-        this.unitOfWork = unitOfWork;
         this.logger = logger;
+        this.mobileStatisticsEventsService = mobileStatisticsEventsService;
     }
 
     /// <summary>
@@ -50,17 +50,16 @@ public class MobileStatisticsEventsController : ControllerBase
             return BadRequest("ID is empty.");
         }
 
-        IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
+        IEnumerable<MobileStatisticsEvent> events = await this.mobileStatisticsEventsService.GetByIdAsync(mobileStatisticsId);
         if (events.Count().Equals(0))
         {
             return BadRequest("Events is empty.");
         }
-        MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
-        unitOfWork.Commit();
-        logger.LogInformation("Get events.");
+
+        this.logger.LogInformation("Get events.");
         var result = new MobileStatisticsWithEventsDto
         {
-            Id = mobileStatistics.Id,
+            Id = mobileStatisticsId,
             Events = events.Adapt<IEnumerable<MobileStatisticsEventsDto>>(),
         };
         return Ok(result);
@@ -85,8 +84,7 @@ public class MobileStatisticsEventsController : ControllerBase
                 @event.Description));
         }
 
-        await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(newListEvents);
-        unitOfWork.Commit();
+        await this.mobileStatisticsEventsService.CreateEventsAsync(newListEvents);
         logger.LogInformation("Create event.");
         await MobileStatisticsEventsHub.Send(hub, newListEvents);
         return Ok();
