@@ -67,8 +67,13 @@ app.MapHub<MobileStatisticsEventsHub>("/mobileStatisticsHub");
 app.UseAuthorization();
 
 app.MapControllers();
+
+//Настройка для времени события.
 TypeAdapterConfig<MobileStatisticsEvent, MobileStatisticsEventsDto>.NewConfig()
     .Map(dest => dest.Date, src => Helper.ConvertToIso(src.Date));
+
+//Настройка для даппера
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 app.Run();
 
 /// <summary>

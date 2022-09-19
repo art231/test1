@@ -19,7 +19,6 @@ public class MobileStatisticsEventsRepository : IMobileStatisticsEventsRepositor
     public MobileStatisticsEventsRepository(
         IDbTransaction dbTransaction)
     {
-        RepositoryExtensions.AddUnderScores();
         this.dbTransaction = dbTransaction;
     }
 
