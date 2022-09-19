@@ -4,6 +4,7 @@ import { MobileStatisticsEvents } from 'src/app/models/mobileStatisticsEvents.mo
 import { MobileStatisticsService } from 'src/app/services/mobileStatistics.service';
 import { MobileStatisticsWithEventsService } from 'src/app/services/mobileStatisticsWithEvents.service';
 import { MobileStatisticsSignalRService } from 'src/app/services/mobileStatisticsSignalR.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mobileStatistics-list',
@@ -18,7 +19,8 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
   title = '';
   dataListener?:MobileStatisticsEvents[]
   isCheckBox=true;
-  timerInterval:any;
+
+  private intervalSub!: Subscription;
 
   constructor(private mobileStatisticsService: MobileStatisticsService,
     private mobileStatisticsWithEventsService: MobileStatisticsWithEventsService,
@@ -26,9 +28,7 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.timerInterval = setInterval(()=>{
-      this.retrieveMobileStatistics();
-              }, 1000);
+    this.routerOnActivate();
     this.mobileStatisticsSignalRService.startConnection();
     this.mobileStatisticsSignalRService.addTransferChartDataListener();
   }
@@ -37,14 +37,18 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
     this.mobileStatisticsEvents = mobileStatisticsEventsItem;
     this.currentIndex = index;
   }
-  retrieveMobileStatistics(): void {
-    this.mobileStatisticsService.getAll()
+  routerOnActivate(): void {
+    this.intervalSub = this.mobileStatisticsService.getAllPolling()
       .subscribe({
         next: (data) => {
           this.mobileStatistics = data;
         },
         error: (e) => console.error(e)
       });
+  }
+  
+  routerOnDeactivate():void{
+    this.intervalSub.unsubscribe();
   }
   checkValue(event: any)
   {
@@ -66,18 +70,7 @@ export class MobileStatisticsListComponent implements OnInit, OnDestroy {
         error: (e) => console.error(e)
       });
   }
-  routerOnActivate() {
-    this.timerInterval = setInterval(()=>{
-      this.retrieveMobileStatistics();
-              }, 1000);
-  }
-  
-  routerOnDeactivate() {
-    clearInterval(this.timerInterval);
-  }
   ngOnDestroy() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
+    this.routerOnDeactivate();
  }
 }

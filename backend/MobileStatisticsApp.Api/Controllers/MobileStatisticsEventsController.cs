@@ -51,6 +51,10 @@ public class MobileStatisticsEventsController : ControllerBase
         }
 
         IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
+        if (events.Count().Equals(0))
+        {
+            return BadRequest("Events is empty.");
+        }
         MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
         unitOfWork.Commit();
         logger.LogInformation("Get events.");

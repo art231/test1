@@ -83,7 +83,7 @@ public class MobileStatisticsController : ControllerBase
         await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
         unitOfWork.Commit();
 
-        return await Task.FromResult<IActionResult>(Ok());
+        return Ok();
     }
 
     /// <summary>
