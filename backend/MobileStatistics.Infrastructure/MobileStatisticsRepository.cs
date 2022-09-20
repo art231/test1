@@ -10,6 +10,7 @@ namespace MobileStatisticsApp.Infrastructure;
 /// </summary>
 public class MobileStatisticsRepository : IMobileStatisticsRepository
 {
+    private readonly IUnitOfWork unitOfWork;
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -18,9 +19,6 @@ public class MobileStatisticsRepository : IMobileStatisticsRepository
     {
         this.unitOfWork = unitOfWork;
     }
-
-    private readonly IUnitOfWork unitOfWork;
-
     /// <summary>
     /// Добавление новой сущности.
     /// </summary>

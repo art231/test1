@@ -11,18 +11,6 @@ using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddTransient<DalSession>(s =>
-//    {
-//        var conn = s.GetRequiredService<IDbConnection>();
-//        conn.Open();
-//        return new DalSession(conn);
-//    });
-//builder.Services.AddScoped(s =>
-//{
-//    var conn = s.GetRequiredService<IDbConnection>();
-//    conn.Open();
-//    return conn.BeginTransaction();
-//});
 builder.Services.AddInfrastructure();
 builder.Host.UseSerilog((hbc, lc) => lc
     .ReadFrom.Configuration(hbc.Configuration));
@@ -35,6 +23,7 @@ builder.Services.AddSignalR(h =>
     h.MaximumReceiveMessageSize = 102400000;
     h.EnableDetailedErrors = true;
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder
@@ -44,12 +33,14 @@ builder.Services.AddCors(options =>
         .AllowCredentials());
 });
 WebApplication app = builder.Build();
-
+var builderConn =
+    new NpgsqlConnectionStringBuilder(builder.Configuration.GetConnectionString("DefaultConnection"));
 var serviceScopeFactory = app.Services.GetService<IServiceScopeFactory>();
 using (IServiceScope scope = serviceScopeFactory!.CreateScope())
 {
     var createDb = scope.ServiceProvider.GetRequiredService<DapperDatabase>();
-    createDb.CreateDatabase(builder.Configuration["CreateDatabase"]);
+    
+    createDb.CreateDatabase(builderConn.Database!);
 }
 
 if (app.Environment.IsDevelopment())

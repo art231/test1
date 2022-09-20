@@ -1,6 +1,7 @@
 ﻿using MobileStatisticsApp.Application.Repositories;
 using MobileStatisticsApp.Application.Services;
 using MobileStatisticsApp.Core.Entities;
+using System.Data;
 
 namespace MobileStatisticsApp.Infrastructure.Services;
 /// <summary>
@@ -9,19 +10,18 @@ namespace MobileStatisticsApp.Infrastructure.Services;
 public class MobileStatisticsEventsService: IMobileStatisticsEventsService
 {
     private IMobileStatisticsEventsRepository mobileStatisticsEventsRepository;
-    private IDalSession dalSession;
-    private UnitOfWork unitOfWork;
+
+    private IDbConnection dbConnection;
     /// <summary>
     /// Сервис событий.
     /// </summary>
     /// <param name="mobileStatisticsRepository">Репозиторий статистики.</param>
     /// <param name="dalSession">Новое подключение.</param>
     public MobileStatisticsEventsService(IMobileStatisticsEventsRepository mobileStatisticsRepository,
-        IDalSession dalSession)
+        IDbConnection dbConnection)
     {
         this.mobileStatisticsEventsRepository = mobileStatisticsRepository;
-        this.dalSession = dalSession;
-        this.unitOfWork = this.dalSession.UnitOfWork;
+        this.dbConnection = dbConnection;
     }
     /// <summary>
     /// Добавление нового события.
@@ -30,7 +30,19 @@ public class MobileStatisticsEventsService: IMobileStatisticsEventsService
     /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
     public async Task CreateEventsAsync(IEnumerable<MobileStatisticsEvent> entities)
     {
-        await this.mobileStatisticsEventsRepository.CreateEventsAsync(entities);
+        using DalSession dalSession = new DalSession(dbConnection);
+        UnitOfWork unitOfWork = dalSession.UnitOfWork;
+        unitOfWork.Begin();
+        try
+        {
+            await this.mobileStatisticsEventsRepository.CreateEventsAsync(entities);
+            unitOfWork.Commit();
+        }
+        catch
+        {
+            unitOfWork.Rollback();
+            throw;
+        }
     }
     /// <summary>
     /// Получение по ключу объекта.
@@ -40,18 +52,20 @@ public class MobileStatisticsEventsService: IMobileStatisticsEventsService
     public async Task<IEnumerable<MobileStatisticsEvent>> GetByIdAsync(Guid mobileStatisticsId)
     {
         IEnumerable<MobileStatisticsEvent> result;
-        this.unitOfWork.Begin();
+        using DalSession dalSession = new DalSession(dbConnection);
+        UnitOfWork unitOfWork = dalSession.UnitOfWork;
+        unitOfWork.Begin();
         try
         {
             result = await this.mobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
-
-            this.unitOfWork.Commit();
+            unitOfWork.Commit();
         }
         catch
         {
-            this.unitOfWork.Rollback();
+            unitOfWork.Rollback();
             throw;
         }
+
         return result;
     }
 }

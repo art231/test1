@@ -1,6 +1,7 @@
 ﻿using MobileStatisticsApp.Application.Services;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Repositories;
+using System.Data;
 
 namespace MobileStatisticsApp.Infrastructure.Services
 {
@@ -10,19 +11,16 @@ namespace MobileStatisticsApp.Infrastructure.Services
     public class MobileStatisticsService : IMobileStatisticsService
     {
         private IMobileStatisticsRepository mobileStatisticsRepository;
-        private IDalSession dalSession;
-        private UnitOfWork unitOfWork;
+        private IDbConnection dbConnection;
         /// <summary>
         /// Конструктор сервиса.
         /// </summary>
         /// <param name="mobileStatisticsRepository">Репозитарий.</param>
-        /// <param name="dalSession">Сессия.</param>
         public MobileStatisticsService(IMobileStatisticsRepository mobileStatisticsRepository,
-            IDalSession dalSession)
+            IDbConnection dbConnection)
         {
             this.mobileStatisticsRepository = mobileStatisticsRepository;
-            this.dalSession= dalSession;
-            this.unitOfWork= this.dalSession.UnitOfWork;
+            this.dbConnection = dbConnection;
         }
         /// <summary>
         /// Получение всех узлов.
@@ -31,18 +29,22 @@ namespace MobileStatisticsApp.Infrastructure.Services
         public async Task<IReadOnlyList<MobileStatisticsItem>> GetAllAsync()
         {
             IReadOnlyList<MobileStatisticsItem> result;
-            this.unitOfWork.Begin();
+            using DalSession dalSession = new DalSession(dbConnection);
+            UnitOfWork unitOfWork = dalSession.UnitOfWork;
+
+            unitOfWork.Begin();
             try
             {
                 result = await this.mobileStatisticsRepository.GetAllAsync();
 
-                this.unitOfWork.Commit();
+                unitOfWork.Commit();
             }
             catch
             {
-                this.unitOfWork.Rollback();
+                unitOfWork.Rollback();
                 throw;
             }
+
             return result;
         }
         /// <summary>
@@ -53,18 +55,22 @@ namespace MobileStatisticsApp.Infrastructure.Services
         public async Task<MobileStatisticsItem> GetByIdAsync(Guid id)
         {
             MobileStatisticsItem result;
-            this.unitOfWork.Begin();
+            using DalSession dalSession = new DalSession(dbConnection);
+            UnitOfWork unitOfWork = dalSession.UnitOfWork;
+
+            unitOfWork.Begin();
             try
             {
                 result = await this.mobileStatisticsRepository.GetByIdAsync(id);
 
-                this.unitOfWork.Commit();
+                unitOfWork.Commit();
             }
             catch
             {
-                this.unitOfWork.Rollback();
+                unitOfWork.Rollback();
                 throw;
             }
+
             return result;
         }
         /// <summary>
@@ -74,16 +80,19 @@ namespace MobileStatisticsApp.Infrastructure.Services
         /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
         public async Task AddAsync(MobileStatisticsItem entity)
         {
-            this.unitOfWork.Begin();
+            using DalSession dalSession = new DalSession(dbConnection);
+            UnitOfWork unitOfWork = dalSession.UnitOfWork;
+
+            unitOfWork.Begin();
             try
             {
                 await this.mobileStatisticsRepository.AddAsync(entity);
 
-                this.unitOfWork.Commit();
+                unitOfWork.Commit();
             }
             catch
             {
-                this.unitOfWork.Rollback();
+                unitOfWork.Rollback();
                 throw;
             }
         }
@@ -94,16 +103,19 @@ namespace MobileStatisticsApp.Infrastructure.Services
         /// <returns><placeholder>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
         public async Task UpdateAsync(MobileStatisticsItem entity)
         {
-            this.unitOfWork.Begin();
+            using DalSession dalSession = new DalSession(dbConnection);
+            UnitOfWork unitOfWork = dalSession.UnitOfWork;
+
+            unitOfWork.Begin();
             try
             {
                 await this.mobileStatisticsRepository.UpdateAsync(entity);
 
-                this.unitOfWork.Commit();
+                unitOfWork.Commit();
             }
             catch
             {
-                this.unitOfWork.Rollback();
+                unitOfWork.Rollback();
                 throw;
             }
         }
