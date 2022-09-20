@@ -86,7 +86,7 @@ public class MobileStatisticsEventsController : ControllerBase
 
         await this.mobileStatisticsEventsService.CreateEventsAsync(newListEvents);
         logger.LogInformation("Create event.");
-        await MobileStatisticsEventsHub.Send(hub, newListEvents);
+        await MobileStatisticsEventsHub.Send(hub, "Ok");
         return Ok();
     }
 }

@@ -13,6 +13,6 @@ public class MobileStatisticsEventsHub : Hub
     /// <param name="hubContext">Контекст отправки сообщения.</param>
     /// <param name="message">Сообщение.</param>
     /// <returns>Выполнение задачи.</returns>
-    public static async Task Send(IHubContext<MobileStatisticsEventsHub> hubContext, IEnumerable<MobileStatisticsEvent> message) =>
+    public static async Task Send(IHubContext<MobileStatisticsEventsHub> hubContext, string message) =>
         await hubContext.Clients.All.SendAsync("TransferData", message);
 }
