@@ -31,7 +31,6 @@ namespace MobileStatisticsApp.Infrastructure.Services
         public async Task<IReadOnlyList<MobileStatisticsItem>> GetAllAsync()
         {
             IReadOnlyList<MobileStatisticsItem> result;
-            this.unitOfWork = dalSession.UnitOfWork;
             this.unitOfWork.Begin();
             try
             {
