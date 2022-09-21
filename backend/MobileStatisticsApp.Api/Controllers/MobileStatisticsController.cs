@@ -1,6 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using MobileStatistics.Application;
+using MobileStatisticsApp.Api.Models;
+using MobileStatisticsApp.Application.Services;
 using MobileStatisticsApp.Core.Entities;
 using MobileStatisticsApp.Dtos;
 
@@ -14,17 +15,18 @@ namespace MobileStatisticsApp.Api.Controllers;
 public class MobileStatisticsController : ControllerBase
 {
     private readonly ILogger<MobileStatisticsController> logger;
-    private readonly IUnitOfWork unitOfWork;
 
+    private readonly IMobileStatisticsService mobileStatisticsService;
     /// <summary>
-    /// Конструктор для логгирования.
+    /// Конструктор мобильной статистики.
     /// </summary>
-    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>.</param>
-    /// <param name="logger">Сохраняет значение логов.</param>
-    public MobileStatisticsController(IUnitOfWork unitOfWork,
+    /// <param name="mobileStatisticsService">сервис мобильной статистики.</param>
+    /// <param name="logger">Логгирование.</param>
+    public MobileStatisticsController(
+        IMobileStatisticsService mobileStatisticsService,
         ILogger<MobileStatisticsController> logger)
     {
-        this.unitOfWork = unitOfWork;
+        this.mobileStatisticsService = mobileStatisticsService;
         this.logger = logger;
     }
 
@@ -36,8 +38,8 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsDto>))]
     public async Task<IActionResult> GetAll()
     {
-        IReadOnlyList<MobileStatisticsItem>? statistics = await unitOfWork.MobileStatisticsRepository.GetAllAsync();
         logger.LogInformation("Get data.");
+        IReadOnlyList<MobileStatisticsItem> statistics = await this.mobileStatisticsService.GetAllAsync();
         var result = statistics.Adapt<List<MobileStatisticsDto>>();
         return Ok(result);
     }
@@ -51,9 +53,12 @@ public class MobileStatisticsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MobileStatisticsDto))]
     public async Task<IActionResult> GetById(Guid id)
     {
-        MobileStatisticsItem? statisticsItem = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(id);
-
+        if (id == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
         logger.LogInformation("Get by id Mobile Statistics.");
+        var statisticsItem = await this.mobileStatisticsService.GetByIdAsync(id);
         var result = statisticsItem.Adapt<MobileStatisticsDto>();
         return Ok(result);
     }
@@ -61,28 +66,40 @@ public class MobileStatisticsController : ControllerBase
     /// <summary>
     /// Добавление статистики.
     /// </summary>
-    /// <param name="mobileStatistics">новые параметры мобильной статистики.</param>
+    /// <param name="mobileStatisticsCreateModel">новые параметры мобильной статистики.</param>
     /// <returns>true если статистика добавилась.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Add(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> Add(MobileStatisticsCreateModel mobileStatisticsCreateModel)
     {
+        var mobileStatistics = MobileStatisticsItem.CreateMobileStatisticsItem(
+            mobileStatisticsCreateModel.Title,
+            mobileStatisticsCreateModel.LastStatistics,
+            mobileStatisticsCreateModel.VersionClient,
+            mobileStatisticsCreateModel.Type);
         logger.LogInformation("Add new mobile statistics.");
-        mobileStatistics.Id = Guid.NewGuid();
-        await unitOfWork.MobileStatisticsRepository.AddAsync(mobileStatistics);
+        await this.mobileStatisticsService.AddAsync(mobileStatistics);
         return Ok();
     }
 
     /// <summary>
     /// Обновление мобильной статистики.
     /// </summary>
-    /// <param name="mobileStatistics">Данные для изменениня.</param>
+    /// <param name="mobileStatisticsUpdateModel">Данные для изменениня.</param>
     /// <returns>Отображение что данные изменились.</returns>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsItem mobileStatistics)
+    public async Task<IActionResult> UpdateMobileStatistics(MobileStatisticsUpdateModel mobileStatisticsUpdateModel)
     {
-        await unitOfWork.MobileStatisticsRepository.UpdateAsync(mobileStatistics);
+        MobileStatisticsItem getItem = await this.mobileStatisticsService.GetByIdAsync(mobileStatisticsUpdateModel.Id);
+        getItem.UpdateMobileStatisticsItem(
+            mobileStatisticsUpdateModel.Id,
+            mobileStatisticsUpdateModel.Title,
+            mobileStatisticsUpdateModel.LastStatistics,
+            mobileStatisticsUpdateModel.VersionClient,
+            mobileStatisticsUpdateModel.Type
+        );
+        await this.mobileStatisticsService.UpdateAsync(getItem);
 
         logger.LogInformation("Update mobile statistics.");
         return Ok();

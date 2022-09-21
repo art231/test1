@@ -1,7 +1,10 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using MobileStatistics.Application;
+using Microsoft.AspNetCore.SignalR;
+using MobileStatisticsApp.Api.ConfigHubs;
 using MobileStatisticsApp.Api.Dtos;
+using MobileStatisticsApp.Api.Models;
+using MobileStatisticsApp.Application.Services;
 using MobileStatisticsApp.Core.Entities;
 
 namespace MobileStatisticsApp.Api.Controllers;
@@ -13,19 +16,24 @@ namespace MobileStatisticsApp.Api.Controllers;
 [Route("[controller]")]
 public class MobileStatisticsEventsController : ControllerBase
 {
+    private readonly IHubContext<MobileStatisticsEventsHub> hub;
     private readonly ILogger<MobileStatisticsEventsController> logger;
-    private readonly IUnitOfWork unitOfWork;
-
+    private readonly IMobileStatisticsEventsService mobileStatisticsEventsService;
     /// <summary>
-    /// Конструктор для событий.
+    /// Контроллер.
     /// </summary>
-    /// <param name="unitOfWork"><see cref="IUnitOfWork"/>Хранилище общих репозиториев.</param>
-    /// <param name="logger">Сохраняет значение логов.</param>
-    public MobileStatisticsEventsController(IUnitOfWork unitOfWork,
-        ILogger<MobileStatisticsEventsController> logger)
+    /// <param name="hub">Хаб.</param>
+    /// <param name="logger">Логгер.</param>
+    /// <param name="mobileStatisticsEventsService">Сервис.</param>
+    public MobileStatisticsEventsController(
+        IHubContext<MobileStatisticsEventsHub> hub,
+        ILogger<MobileStatisticsEventsController> logger,
+        IMobileStatisticsEventsService mobileStatisticsEventsService
+        )
     {
-        this.unitOfWork = unitOfWork;
+        this.hub = hub;
         this.logger = logger;
+        this.mobileStatisticsEventsService = mobileStatisticsEventsService;
     }
 
     /// <summary>
@@ -37,12 +45,21 @@ public class MobileStatisticsEventsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MobileStatisticsEventsDto>))]
     public async Task<IActionResult> GetEventsById(Guid mobileStatisticsId)
     {
-        IEnumerable<MobileStatisticsEvent> events = await unitOfWork.MobileStatisticsEventsRepository.GetByIdAsync(mobileStatisticsId);
-        MobileStatisticsItem mobileStatistics = await unitOfWork.MobileStatisticsRepository.GetByIdAsync(mobileStatisticsId);
-        logger.LogInformation("Get events.");
+        if (mobileStatisticsId == Guid.Empty)
+        {
+            return BadRequest("ID is empty.");
+        }
+
+        IEnumerable<MobileStatisticsEvent> events = await this.mobileStatisticsEventsService.GetByIdAsync(mobileStatisticsId);
+        if (events.Count().Equals(0))
+        {
+            return BadRequest("Events is empty.");
+        }
+
+        this.logger.LogInformation("Get events.");
         var result = new MobileStatisticsWithEventsDto
         {
-            Id = mobileStatistics.Id,
+            Id = mobileStatisticsId,
             Events = events.Adapt<IEnumerable<MobileStatisticsEventsDto>>(),
         };
         return Ok(result);
@@ -51,14 +68,25 @@ public class MobileStatisticsEventsController : ControllerBase
     /// <summary>
     /// Создание нового события.
     /// </summary>
-    /// <param name="mobileStatisticsEvents">Сущность нового события.</param>
+    /// <param name="mobileStatisticsEventsCreateModel">Сущность нового события.</param>
     /// <returns>Ок - если создалось.</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> CreateEventById(IEnumerable<MobileStatisticsEvent> mobileStatisticsEvents)
+    public async Task<IActionResult> CreateEventById(IEnumerable<CreateMobileStatisticsEventModel> mobileStatisticsEventsCreateModel)
     {
-        await unitOfWork.MobileStatisticsEventsRepository.CreateEventsAsync(mobileStatisticsEvents);
+        var newListEvents = new List<MobileStatisticsEvent>();
+        foreach (CreateMobileStatisticsEventModel @event in mobileStatisticsEventsCreateModel)
+        {
+            newListEvents.Add(MobileStatisticsEvent.CreateNewEvent(
+                @event.MobileStatisticsId,
+                @event.Date,
+                @event.Name,
+                @event.Description));
+        }
+
+        await this.mobileStatisticsEventsService.CreateEventsAsync(newListEvents);
         logger.LogInformation("Create event.");
+        await MobileStatisticsEventsHub.Send(hub, "Ok");
         return Ok();
     }
 }

@@ -1,32 +1,109 @@
-﻿using MobileStatistics.Application;
-using MobileStatisticsApp.Application.Repositories;
-using MobileStatisticsApp.Repositories;
+﻿using System.Data;
+using MobileStatistics.Application;
 
 namespace MobileStatisticsApp.Infrastructure;
 
 /// <summary>
-///     Объединения репозитариев.
+/// Модель подключения данных.
 /// </summary>
-public class UnitOfWork : IUnitOfWork
+public interface IDalSession
 {
     /// <summary>
-    ///     Конструктор объединений.
+    /// Конструктор.
     /// </summary>
-    /// <param name="mobileStatisticsRepository">Репозиторий мобильной статистики.</param>
-    ///<param name="mobileStatisticsEventsRepository">Репозиторий мобильной статистики.</param>
-    public UnitOfWork(IMobileStatisticsRepository mobileStatisticsRepository,
-        IMobileStatisticsEventsRepository mobileStatisticsEventsRepository)
+    UnitOfWork UnitOfWork { get; }
+}
+
+/// <summary>
+/// Модель подключения данных.
+/// </summary>
+public class DalSession : IDalSession, IDisposable
+{
+    private IDbConnection dbConnection;
+    private UnitOfWork unitOfWork;
+    /// <summary>
+    /// Открытие сессии подключения.
+    /// </summary>
+    /// <param name="dbConnection">Подключение к бд.</param>
+    public DalSession(IDbConnection dbConnection)
     {
-        MobileStatisticsRepository = mobileStatisticsRepository;
-        MobileStatisticsEventsRepository = mobileStatisticsEventsRepository;
+        this.dbConnection = dbConnection;
+        this.dbConnection.Open();
+        unitOfWork = new UnitOfWork(dbConnection);
     }
 
     /// <summary>
-    ///     Репозиторий мобильной статистики.
+    /// Модель объединения для транзакции.
     /// </summary>
-    public IMobileStatisticsRepository MobileStatisticsRepository { get; }
+    public UnitOfWork UnitOfWork => unitOfWork;
     /// <summary>
-    ///     Репозиторий событий мобильной статистики.
+    /// Очистка памяти.
     /// </summary>
-    public IMobileStatisticsEventsRepository MobileStatisticsEventsRepository { get; }
+    public void Dispose()
+    {
+        unitOfWork.Dispose();
+        dbConnection.Dispose();
+    }
+}
+
+/// <summary>
+/// Юнит оф ворк.
+/// </summary>
+public class UnitOfWork : IUnitOfWork
+{
+    private readonly IDbConnection connection;
+    private IDbTransaction? transaction;
+    /// <summary>
+    /// Конструктор Юнит оф ворк.
+    /// </summary>
+    /// <param name="connection">Подключение.</param>
+    public UnitOfWork(IDbConnection connection)
+    {
+        this.connection = connection;
+    }
+
+    /// <summary>
+    /// Подключение.
+    /// </summary>
+    IDbConnection IUnitOfWork.Connection => connection;
+
+    /// <summary>
+    /// Подключение транзакции.
+    /// </summary>
+    IDbTransaction IUnitOfWork.Transaction => transaction!;
+
+    /// <summary>
+    /// Начало транзакции.
+    /// </summary>
+    public void Begin()
+    {
+        transaction = connection.BeginTransaction();
+    }
+
+    /// <summary>
+    /// Коммит.
+    /// </summary>
+    public void Commit()
+    {
+        transaction?.Commit();
+        Dispose();
+    }
+
+    /// <summary>
+    /// Откат.
+    /// </summary>
+    public void Rollback()
+    {
+        transaction?.Rollback();
+        Dispose();
+    }
+
+    /// <summary>
+    /// Очистка памяти.
+    /// </summary>
+    public void Dispose()
+    {
+        if (transaction != null) transaction.Dispose();
+        transaction = null;
+    }
 }

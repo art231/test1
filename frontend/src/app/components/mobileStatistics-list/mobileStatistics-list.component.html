@@ -31,6 +31,11 @@
         <div class="col-md-6">
         </div>
       </div>
+      <div>
+        <input type="checkbox" id="scales" name="scales" checked
+         (change)="checkValue($event)">
+        <label for="scales">Scales</label>
+      </div>
       <div class="col-sm">
         <h2>{{currentMobileStatistics.title}}</h2>
         <p>Id устройства: {{currentMobileStatistics.id}}</p>
